@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/view/virtualmachine_view_detail.dart';
+import 'package:flutter_project/view/virtualmachine_view_update.dart';
 
 class VirtualmachineView extends StatefulWidget {
   const VirtualmachineView({super.key});
@@ -41,51 +43,74 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         padding: const EdgeInsets.all(0.8),
         child: ListView(
           children: [
-            Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Máy 1'),
-                  const Row(
-                    children: [
-                      Text('GPU: RTX 4060'),
-                      Text('CPU:i9-13900K '),
-                      Text('RAM: 32GB DRR5'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Status: Play'),
-                          Text('Price: 0.59 USD'),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                print('xoá đã được nhấn');
-                              },
-                              icon: const Icon(Icons.delete)),
-                          IconButton(
-                              onPressed: () {
-                                print('sửa đã được nhấn');
-                              },
-                              icon: const Icon(Icons.edit))
-                        ],
-                      )
-                    ],
-                  )
-                ],
+            GestureDetector(
+              onLongPress: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const VirtualmachineViewDetail()),
+                );
+              },
+              child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Máy 1'),
+                    const Row(
+                      children: [
+                        Text('GPU: RTX 4060'),
+                        SizedBox(width: 10),
+                        Text('CPU:i9-13900K '),
+                        SizedBox(width: 10),
+                        Text('RAM: 32GB DRR5'),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Status: Play'),
+                            SizedBox(height: 15),
+                            Text('Price: 0.59 USD/1h'),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  print('xoá đã được nhấn');
+                                },
+                                icon: const Icon(Icons.delete)),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context)=> const VirtualmachineViewUpdate()
+                                      
+                                    )
+                                  );
+                                },
+                                icon: const Icon(Icons.edit))
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print('ok');
+        },
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
