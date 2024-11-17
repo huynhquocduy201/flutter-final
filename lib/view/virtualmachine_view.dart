@@ -23,7 +23,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   }
 
   Future<void> loadEvents() async {
-    final events = await eventService.getAllUser();
+    final events = await eventService.getAllEvents();
     setState(() {
       items = events;
     });
@@ -54,8 +54,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                 onTap: () => {print('ok')},
                 child: const CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(
-                      'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8IDQ0KDgoQCA0ODw4OCAgKCg8ICQgNFREWFhURExMYHSggGBolGxMTITEhJSkuLjouFx8zODMsNygtLisBCgoKDQ0NDw0PECsZFRktKysrKysrKysrKysrLSsrKysrKzctKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAN4A5AMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQQFAgYD/8QANhABAAECAgcGBAMJAAAAAAAAAAECEQMEBRQhMVFSoRITMkFhcRUiQlNDgZEjM2JjcrHB8PH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAEQH/2gAMAwEAAhEDEQA/APeANIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH2y2Vrx52RaPOoHxLtrB0VRT4pmufPgs05TDj8OP0Sjzly70c5TDn8OFfF0ZRX4b4c9CjFH3zOSqy83mO1HND4KAAAAAAAAAAAAAAAAAAAAAIv5AsZLLTmK7fTG2pvYeHGHEUxFoh8dH4HdYcbLTO2pZZVIAAAOK6Iqi0xeJ3sLP5TuKrx4Z3PQK+cwe9omm15+mQedSTFpmOGyRpAAAAAAAAAAAAAAAAAAB3l6O3iUxv27fZws6M/fR7IPQRFosAigAAACLJAecz1HYxa4/N8V3TEWxY9Y2qSoAKAAAAAAAAAAAAAAAACzo3ZjUqzvL4nYrpn12or0wimbxCUAAAAAC4MPTE3xY9I2qT7Z2vvMSqd8XtD4qgAoAAAAAAAAAAAAAAAAIskBuaLx+9otM7adnquvN5XGnAriuN31U+Uw9BgY1ONTFVM39ODKvoFwAC4CppDG7qiZvtnZCxi4sYcXmbQwM7mJx6vSPD6gr3mUoS0gAAAAAAAAAAAAAAAAAACAS+mXzFWXm9M7PqpndL5XSg28tpGjF2T8k8J3LlOJFW6qJ/N5fspiZjzmPaZIr081xG+Yj81XH0hh4Wy/bnhG1hXnmmfeZlFv+kH3zWaqzE7dlPlHB8BK4Ai6RAAAAAAAAAAAAAAAABF0+m/hC/lNGTX81c9mOWN6CjRTNc2piavaLreFozEr32oj12tjCwKcKLU0xH930n/dqKyo0PxxP0h3Gh6fuS0wGZ8Hp+5UfB6fuVNMBmfB6fuVHwen7lTTAZnwePuT+jmdD/zOjVAYWJozEp3T2/bYq14dVG+mafeHprOMTCjEi1VMVA8ylo5vRnZ+aiL/AMMs6YtsmLT5xwVABQAAAAAAAAAAI2/4Q0NFZbtzOJVF4jwwCxo7IdiIxKovVO2In6WjZMF2VAuXAC4AFwAC4AFwAuXBEQoZ/IxixNVOyrhHm0LosDy8xaZidkxvgamlcr+LEbvFDKuqJAUAAAAAAAATh09uqKeL0WDhxhURREbmPorD7WLfg25lNVNy7m5dB1cu5uXB1cu5uXB1cu5uXB1cu5uXB1cu5uXB1cu5uXB1cu5uXAxKYriaZedx8Pu66qOD0V2Rpei1cVcYVFEBQAAAAAAABo6Hjx1NKZZ2iN1fu0JQTcu5BXQi6biAXLqFy6EIroui6AdXLuQHVy7kB1cu5AdXUNLxemmr1suqelZ/Zx/UDKAVAAAAAV9ajhJrUcJBYFfWo4Sa1HLINjRE+OGi89kM9FGJ4ZtMbWvrkcs9EFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFoVdcjlnoa5HLPQFpR0rPyRHq+muRyz0Zeks9FdXZ7M7NwOBX1qOWTWo4SosCvrUcJNajhILAr61HCQH//2Q=='),
+                  child: Icon(Icons.person),
                 ),
               ),
             ],
@@ -71,10 +70,16 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 
             return GestureDetector(
               onLongPress: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => VirtualmachineViewDetail(event: item)),
-                );
+                Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (context) => VirtualmachineViewDetail(
+                              event: item,
+                            )))
+                    .then((value) async {
+                  if (value == true) {
+                    await loadEvents();
+                  }
+                });
               },
               child: Card(
                 child: Column(
@@ -106,15 +111,23 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  print('xoá đã đc tạo');
+                                 
                                   _delteteEvents(item);
                                   loadEvents();
                                 },
                                 icon: const Icon(Icons.delete)),
                             IconButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => VirtualmachineViewUpdate(event: item)));
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              VirtualmachineViewUpdate(
+                                                  event: item)))
+                                      .then((value) async {
+                                    if (value == true) {
+                                      await loadEvents();
+                                    }
+                                  });
                                 },
                                 icon: const Icon(Icons.edit))
                           ],
@@ -130,8 +143,14 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const VirtualmachineViewCreate()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (context) => const VirtualmachineViewCreate()))
+              .then((value) async {
+            if (value == true) {
+              await loadEvents();
+            }
+          });
         },
         child: const Icon(Icons.add),
       ),

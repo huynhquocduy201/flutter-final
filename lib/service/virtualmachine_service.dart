@@ -5,7 +5,7 @@ class VirtualmachineService {
   final db = Localstore.getInstance(useSupportDir: true);
   final path = 'virtualmachine';
 
-  Future<List<VirtualmachineModel>> getAllUser() async {
+  Future<List<VirtualmachineModel>> getAllEvents() async {
     final virtualsMap = await db.collection(path).get();
     if (virtualsMap != null) {
       return virtualsMap.entries.map((entry) {

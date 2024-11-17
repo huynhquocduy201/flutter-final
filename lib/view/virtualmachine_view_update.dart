@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
-import 'package:flutter_project/view/virtualmachine_view.dart';
 
 class VirtualmachineViewUpdate extends StatefulWidget {
   final VirtualmachineModel event;
@@ -32,15 +31,17 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     descriptionControoler.text = widget.event.description;
   }
 
-  Future<void> saveEvent() async {
+  Future<void> _saveEvent() async {
     widget.event.name = nameController.text;
     widget.event.ram = ramController.text;
     widget.event.cpu = cpuControoler.text;
     widget.event.gpu = gpuController.text;
-    widget.event.price = double.parse(priceControoler.text);
+    widget.event.price = double.tryParse(priceControoler.text);
     widget.event.description = descriptionControoler.text;
     widget.event.status = dropdownValue;
     await eventService.saveEvent(widget.event);
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
   }
 
   @override
@@ -51,7 +52,6 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(0.8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -90,7 +90,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0)),
+                      EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,7 +107,6 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                     setState(() {
                       dropdownValue = newValue!;
                     });
-                    print(dropdownValue);
                   },
                   items: const [
                     DropdownMenuItem<String>(
@@ -120,13 +119,9 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                     ),
                   ],
                 ),
-                FilledButton.tonalIcon(
-                  onPressed: () {
-                    saveEvent();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const VirtualmachineView()));
-                  },
-                  label: const Text('Update'),
+                FilledButton.icon(
+                  onPressed: _saveEvent,
+                  label: const Text('Update sự kiện'),
                 )
               ],
             )

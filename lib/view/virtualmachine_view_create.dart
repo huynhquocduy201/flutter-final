@@ -31,9 +31,11 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   String dropdownValue = 'No users';
 
   Future<void> _addEvent() async {
+    double? result = double.tryParse(priceControoler.text);
+    if (result == null) {}
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
-    event.price = double.parse(priceControoler.text);
+    event.price = double.tryParse(priceControoler.text);
     event.ram = ramController.text;
     event.description = descriptionControoler.text;
     event.name = nameController.text;
@@ -56,7 +58,9 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
             const Text('Name Vitual Machine'),
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Name Vitual Machine'),
             ),
             const SizedBox(height: 10),
             const Text('Ram'),
@@ -88,7 +92,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0)),
+                      EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,8 +125,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
                 FilledButton.tonalIcon(
                   onPressed: () {
                     _addEvent();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const VirtualmachineView()));
+                    Navigator.of(context).pop(true);
                   },
                   label: const Text('Create'),
                 )
