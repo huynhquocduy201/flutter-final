@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/model/virtualmachine_model.dart';
+import 'package:flutter_project/service/virtualmachine_service.dart';
 import 'package:flutter_project/view/virtualmachine_view.dart';
 
 class VirtualmachineViewUpdate extends StatefulWidget {
-  const VirtualmachineViewUpdate({super.key});
+  final VirtualmachineModel event;
+  const VirtualmachineViewUpdate({super.key, required this.event});
 
   @override
   State<VirtualmachineViewUpdate> createState() =>
@@ -16,7 +19,29 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
   final cpuControoler = TextEditingController();
   final priceControoler = TextEditingController();
   final descriptionControoler = TextEditingController();
+  final eventService = VirtualmachineService();
   String dropdownValue = 'No users';
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.event.name;
+    ramController.text = widget.event.ram;
+    gpuController.text = widget.event.gpu;
+    cpuControoler.text = widget.event.cpu;
+    priceControoler.text = widget.event.price.toString();
+    descriptionControoler.text = widget.event.description;
+  }
+
+  Future<void> saveEvent() async {
+    widget.event.name = nameController.text;
+    widget.event.ram = ramController.text;
+    widget.event.cpu = cpuControoler.text;
+    widget.event.gpu = gpuController.text;
+    widget.event.price = double.parse(priceControoler.text);
+    widget.event.description = descriptionControoler.text;
+    widget.event.status = dropdownValue;
+    await eventService.saveEvent(widget.event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +122,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                 ),
                 FilledButton.tonalIcon(
                   onPressed: () {
+                    saveEvent();
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const VirtualmachineView()));
                   },

@@ -29,6 +29,10 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     });
   }
 
+  Future<void> _delteteEvents(event) async {
+    await eventService.deleteEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +73,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
               onLongPress: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => const VirtualmachineViewDetail()),
+                      builder: (context) => VirtualmachineViewDetail(event: item)),
                 );
               },
               child: Card(
@@ -102,14 +106,15 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  print('xoá đã được nhấn');
+                                  print('xoá đã đc tạo');
+                                  _delteteEvents(item);
+                                  loadEvents();
                                 },
                                 icon: const Icon(Icons.delete)),
                             IconButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const VirtualmachineViewUpdate()));
+                                      builder: (context) => VirtualmachineViewUpdate(event: item)));
                                 },
                                 icon: const Icon(Icons.edit))
                           ],
