@@ -1,24 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:ffi';
+
 class VirtualmachineModel {
-  String? id;
-  String? name;
-  String? gpu;
-  String? cpu;
-  String? ram;
-  Float? price;
-  String? description;
-  String? status;
+  String id;
+  String name;
+  String gpu;
+  String cpu;
+  String ram;
+  double price;
+  String description;
+  String status;
   VirtualmachineModel({
-    this.id,
-    this.name,
-    this.gpu,
-    this.cpu,
-    this.ram,
-    this.price,
-    this.description,
-    this.status,
+    required this.id,
+    required this.name,
+    required this.gpu,
+    required this.cpu,
+    required this.ram,
+    required this.price,
+    required this.description,
+    required this.status,
   });
 
   VirtualmachineModel copyWith({
@@ -27,7 +27,7 @@ class VirtualmachineModel {
     String? gpu,
     String? cpu,
     String? ram,
-    Float? price,
+    double? price,
     String? description,
     String? status,
   }) {
@@ -58,14 +58,14 @@ class VirtualmachineModel {
 
   factory VirtualmachineModel.fromMap(Map<String, dynamic> map) {
     return VirtualmachineModel(
-      id: map['id'] != null ? map['id'] as String : null,
-      name: map['name'] != null ? map['name'] as String : null,
-      gpu: map['gpu'] != null ? map['gpu'] as String : null,
-      cpu: map['cpu'] != null ? map['cpu'] as String : null,
-      ram: map['ram'] != null ? map['ram'] as String : null,
-      price: map['price'] != null ? map['price'] as Float : null,
-      description: map['description'] != null ? map['description'] as String : null,
-      status: map['status'] != null ? map['status'] as String : null,
+      id: map['id'] as String,
+      name: map['name'] as String,
+      gpu: map['gpu'] as String,
+      cpu: map['cpu'] as String,
+      ram: map['ram'] as String,
+      price: map['price'] as double,
+      description: map['description'] as String,
+      status: map['status'] as String,
     );
   }
 
@@ -83,7 +83,7 @@ class VirtualmachineModel {
         other.cpu == cpu &&
         other.ram == ram &&
         other.price == price &&
-        other.description == description&&
+        other.description == description &&
         other.status == status;
   }
 
@@ -92,10 +92,10 @@ class VirtualmachineModel {
     return id.hashCode ^
         name.hashCode ^
         gpu.hashCode ^
-        cpu .hashCode ^
-        ram .hashCode ^
+        cpu.hashCode ^
+        ram.hashCode ^
         price.hashCode ^
         description.hashCode ^
-        status.hashCode ;
+        status.hashCode;
   }
 }

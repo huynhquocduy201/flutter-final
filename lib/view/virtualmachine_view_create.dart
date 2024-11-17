@@ -1,28 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/model/virtualmachine_model.dart';
+import 'package:flutter_project/service/virtualmachine_service.dart';
 import 'package:flutter_project/view/virtualmachine_view.dart';
 
-class VirtualmachineViewUpdate extends StatefulWidget {
-  const VirtualmachineViewUpdate({super.key});
+class VirtualmachineViewCreate extends StatefulWidget {
+  const VirtualmachineViewCreate({super.key});
 
   @override
-  State<VirtualmachineViewUpdate> createState() =>
-      _VirtualmachineViewUpdateState();
+  State<VirtualmachineViewCreate> createState() =>
+      _VirtualmachineViewCreateState();
 }
 
-class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
+class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   final nameController = TextEditingController();
   final ramController = TextEditingController();
   final gpuController = TextEditingController();
   final cpuControoler = TextEditingController();
   final priceControoler = TextEditingController();
   final descriptionControoler = TextEditingController();
+  final eventService = VirtualmachineService();
+  final event = VirtualmachineModel(
+      id: '',
+      name: '',
+      gpu: '',
+      cpu: '',
+      ram: '',
+      price: 0,
+      description: '',
+      status: '');
   String dropdownValue = 'No users';
+
+  Future<void> _addEvent() async {
+    event.cpu = cpuControoler.text;
+    event.gpu = gpuController.text;
+    event.price = double.parse(priceControoler.text);
+    event.ram = ramController.text;
+    event.description = descriptionControoler.text;
+    event.name = nameController.text;
+    event.status = dropdownValue;
+    await eventService.saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upadate'),
+        title: const Text('CREATE ITEM VIRTUAL MACHINE'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -97,10 +120,11 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                 ),
                 FilledButton.tonalIcon(
                   onPressed: () {
+                    _addEvent();
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const VirtualmachineView()));
                   },
-                  label: const Text('Update'),
+                  label: const Text('Create'),
                 )
               ],
             )

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/model/virtualmachine_model.dart';
+import 'package:flutter_project/service/virtualmachine_service.dart';
+import 'package:flutter_project/view/virtualmachine_view_create.dart';
 import 'package:flutter_project/view/virtualmachine_view_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_update.dart';
 
@@ -10,6 +13,22 @@ class VirtualmachineView extends StatefulWidget {
 }
 
 class _VirtualmachineViewState extends State<VirtualmachineView> {
+  final eventService = VirtualmachineService();
+  List<VirtualmachineModel> items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadEvents();
+  }
+
+  Future<void> loadEvents() async {
+    final events = await eventService.getAllUser();
+    setState(() {
+      items = events;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,9 +60,12 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
       ]),
       body: Padding(
         padding: const EdgeInsets.all(0.8),
-        child: ListView(
-          children: [
-            GestureDetector(
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items.elementAt(index);
+
+            return GestureDetector(
               onLongPress: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -54,25 +76,25 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Máy 1'),
-                    const Row(
+                    Text(item.name),
+                    Row(
                       children: [
-                        Text('GPU: RTX 4060'),
-                        SizedBox(width: 10),
-                        Text('CPU:i9-13900K '),
-                        SizedBox(width: 10),
-                        Text('RAM: 32GB DRR5'),
+                        Text(item.gpu),
+                        const SizedBox(width: 10),
+                        Text(item.cpu),
+                        const SizedBox(width: 10),
+                        Text(item.ram),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Status: Play'),
-                            SizedBox(height: 15),
-                            Text('Price: 0.59 USD/1h'),
+                            Text('Status:${item.status}'),
+                            const SizedBox(height: 15),
+                            Text('Price:${item.price}'),
                           ],
                         ),
                         Column(
@@ -85,12 +107,9 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                 icon: const Icon(Icons.delete)),
                             IconButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context)=> const VirtualmachineViewUpdate()
-                                      
-                                    )
-                                  );
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const VirtualmachineViewUpdate()));
                                 },
                                 icon: const Icon(Icons.edit))
                           ],
@@ -100,13 +119,14 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                   ],
                 ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('ok');
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const VirtualmachineViewCreate()));
         },
         child: const Icon(Icons.add),
       ),
