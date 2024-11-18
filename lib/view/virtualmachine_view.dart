@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
+import 'package:flutter_project/view/user_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_create.dart';
 import 'package:flutter_project/view/virtualmachine_view_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_update.dart';
 
 class VirtualmachineView extends StatefulWidget {
-  const VirtualmachineView({super.key});
+  final UserModel event;
+  const VirtualmachineView({super.key, required this.event});
 
   @override
   State<VirtualmachineView> createState() => _VirtualmachineViewState();
@@ -33,25 +36,41 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     await eventService.deleteEvent(event);
   }
 
+  Future<void> _logoutEvent() async {
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [
+      appBar: AppBar(automaticallyImplyLeading: false, actions: [
         Padding(
           padding: const EdgeInsets.all(0.8),
           child: Row(
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: 10),
-                  Text('Dan1512003'),
-                  Text('Admin')
+                  const SizedBox(height: 10),
+                  Text(widget.event.username),
+                  const Text('Admin')
                 ],
               ),
               const SizedBox(width: 5),
               GestureDetector(
-                onTap: () => {print('ok')},
+                onTap: () => {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (context) => UserDetail(
+                                event: widget.event,
+                              )))
+                      .then((value) async {
+                    if (value == true) {
+                      _logoutEvent();
+                    }
+                  })
+                },
                 child: const CircleAvatar(
                   radius: 20,
                   child: Icon(Icons.person),
@@ -111,7 +130,6 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                 
                                   _delteteEvents(item);
                                   loadEvents();
                                 },

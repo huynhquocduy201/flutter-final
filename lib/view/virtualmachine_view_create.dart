@@ -60,7 +60,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
               controller: nameController,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Name Vitual Machine'),
+                 ),
             ),
             const SizedBox(height: 10),
             const Text('Ram'),

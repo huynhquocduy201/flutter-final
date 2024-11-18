@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/view/loggin_view.dart';
 import 'package:flutter_project/view/virtualmachine_view.dart';
 
 void main() {
@@ -12,6 +13,6 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: VirtualmachineView());
+        home: LogginView());
   }
 }
