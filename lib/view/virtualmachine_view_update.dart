@@ -48,9 +48,19 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upadate'),
-        centerTitle: true,
-      ),
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  icon: const Icon(Icons.chevron_left)),
+              const Text('Update'),
+              const SizedBox(width: 10)
+            ],
+          )),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

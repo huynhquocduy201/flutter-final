@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/service/user_service.dart';
 
-
-class  ChangePasswordView extends StatefulWidget {
+class ChangePasswordView extends StatefulWidget {
   final UserModel event;
   const ChangePasswordView({super.key, required this.event});
 
@@ -14,7 +13,7 @@ class  ChangePasswordView extends StatefulWidget {
 class _ChangePasswordViewState extends State<ChangePasswordView> {
   final repasswordController = TextEditingController();
   final passwordController = TextEditingController();
-  final event = UserModel(username: '', password: '');
+
   final eventService = UserService();
   String? erorr;
   Future<void> chagepassword() async {
@@ -49,13 +48,13 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               TextField(
                 controller: repasswordController,
                 decoration: InputDecoration(
-                    label: const Text('Enter Re-password'), errorText: erorr),
+                    label: const Text('Enter Password'), errorText: erorr),
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
-                    label: const Text('Enter Password'), errorText: erorr),
+                    label: const Text('Enter Re-password'), errorText: erorr),
               ),
               const SizedBox(height: 10),
               const SizedBox(height: 20),

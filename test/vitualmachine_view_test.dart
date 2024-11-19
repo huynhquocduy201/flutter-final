@@ -9,5 +9,6 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: VirtualmachineView(event: userModel),
     ));
+    
   });
 }

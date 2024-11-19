@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
 
-
 class VirtualmachineViewCreate extends StatefulWidget {
   const VirtualmachineViewCreate({super.key});
 
@@ -47,9 +46,19 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CREATE ITEM VIRTUAL MACHINE'),
-        centerTitle: true,
-      ),
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  icon: const Icon(Icons.chevron_left)),
+              const Text('CREATE ITEM VIRTUAL MACHINE'),
+              const SizedBox(width: 10)
+            ],
+          )),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(0.8),
         child: Column(
@@ -59,8 +68,8 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
             TextField(
               controller: nameController,
               decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                 ),
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 10),
             const Text('Ram'),
@@ -109,7 +118,6 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
                     setState(() {
                       dropdownValue = newValue!;
                     });
-                    print(dropdownValue);
                   },
                   items: const [
                     DropdownMenuItem<String>(

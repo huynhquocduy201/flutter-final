@@ -17,16 +17,39 @@ class _LogginViewState extends State<LogginView> {
   final event = UserModel(username: '', password: '');
   final eventService = UserService();
   String? erorr;
+  String test = '';
+  List<UserModel> items = [];
+  @override
+  void initState() {
+    super.initState();
+    loadEvents();
+  }
+
+  Future<void> loadEvents() async {
+    final events = await eventService.getAllUser();
+    setState(() {
+      items = events;
+    });
+  }
+
   Future<void> login() async {
-    event.username = usernameController.text;
-    event.password = passwordController.text;
-    final eventgetAll = await eventService.getAllUser();
-    if (eventgetAll.any((e) =>
+    if (items.any((e) =>
         e.password == passwordController.text &&
         e.username == usernameController.text)) {
       if (!mounted) return;
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => VirtualmachineView(event: event)));
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+              builder: (context) => VirtualmachineView(
+                  event: items.firstWhere((e) =>
+                      e.password == passwordController.text &&
+                      e.username == usernameController.text))))
+          .then((value) async {
+        if (value == true) {
+          setState(() {
+            loadEvents();
+          });
+        }
+      });
     } else {
       setState(() {
         erorr = 'password or username is incorrect!';
@@ -67,8 +90,16 @@ class _LogginViewState extends State<LogginView> {
                   Expanded(
                       child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const SignupView()));
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) => const SignupView()))
+                          .then((value) async {
+                        if (value == true) {
+                          setState(() {
+                            loadEvents();
+                          });
+                        }
+                      });
                     },
                     child: const Text(
                       'Signup',

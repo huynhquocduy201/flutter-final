@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
+import 'package:flutter_project/service/user_service.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
 import 'package:flutter_project/view/user_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_create.dart';
@@ -17,8 +18,9 @@ class VirtualmachineView extends StatefulWidget {
 
 class _VirtualmachineViewState extends State<VirtualmachineView> {
   final eventService = VirtualmachineService();
+  final userService = UserService();
   List<VirtualmachineModel> items = [];
-
+  String username = '';
   @override
   void initState() {
     super.initState();
@@ -30,6 +32,19 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     setState(() {
       items = events;
     });
+  }
+
+  Future<void> loadUsername() async {
+    final events = await userService.getAllUser();
+
+    final eventofid = events.firstWhere((e) => e.id == widget.event.id);
+    if (eventofid.username != widget.event.username) {
+      setState(() {
+        username == eventofid.username;
+      });
+    } else {
+      _logoutEvent();
+    }
   }
 
   Future<void> _delteteEvents(event) async {
@@ -44,42 +59,51 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, actions: [
-        Padding(
-          padding: const EdgeInsets.all(0.8),
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          bottom: PreferredSize(
+              preferredSize:
+                  const Size.fromHeight(2.0), // Chiều cao của border dưới
+              child: Container(
+                color: Colors.grey, // Màu của border dưới
+                height: 2.0, // Độ dày của border dưới
+              )),
+          actions: [
+            Container(
+              padding: const EdgeInsets.all(0.8),
+              child: Row(
                 children: [
-                  const SizedBox(height: 10),
-                  Text(widget.event.username),
-                  const Text('Admin')
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const SizedBox(height: 10),
+                      Text(username != '' ? username : widget.event.username),
+                      const Text('Admin')
+                    ],
+                  ),
+                  const SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: () => {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) => UserDetail(
+                                    event: widget.event,
+                                  )))
+                          .then((value) async {
+                        if (value == true) {
+                          loadUsername();
+                        }
+                      })
+                    },
+                    child: const CircleAvatar(
+                      radius: 20,
+                      child: Icon(Icons.person),
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(width: 5),
-              GestureDetector(
-                onTap: () => {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                          builder: (context) => UserDetail(
-                                event: widget.event,
-                              )))
-                      .then((value) async {
-                    if (value == true) {
-                      _logoutEvent();
-                    }
-                  })
-                },
-                child: const CircleAvatar(
-                  radius: 20,
-                  child: Icon(Icons.person),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ]),
+            ),
+          ]),
       body: Padding(
         padding: const EdgeInsets.all(0.8),
         child: ListView.builder(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/service/user_service.dart';
-import 'package:flutter_project/view/loggin_view.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -18,12 +17,25 @@ class _SignupViewState extends State<SignupView> {
   final eventService = UserService();
   String? erorrUserName;
   String? erorrPassword;
+  List<UserModel> items = [];
+  @override
+  void initState() {
+    super.initState();
+    loadEvents();
+  }
+
+  Future<void> loadEvents() async {
+    final events = await eventService.getAllUser();
+    setState(() {
+      items = events;
+    });
+  }
 
   Future<void> signup() async {
     event.username = usernameController.text;
     event.password = passwordController.text;
-    final eventgetAll = await eventService.getAllUser();
-    if (eventgetAll.any((e) => e.username == usernameController.text)) {
+
+    if (items.any((e) => e.username == usernameController.text)) {
       setState(() {
         erorrUserName = 'Username already exists!';
       });
@@ -31,7 +43,7 @@ class _SignupViewState extends State<SignupView> {
       setState(() {
         erorrPassword = 'Password does not match!';
       });
-    } else if (eventgetAll.any((e) => e.username == usernameController.text) &&
+    } else if (items.any((e) => e.username == usernameController.text) &&
         passwordController != repasswordController) {
       setState(() {
         erorrPassword = 'Password does not match1!';
@@ -39,10 +51,8 @@ class _SignupViewState extends State<SignupView> {
       });
     } else {
       await eventService.saveEvent(event);
-
       if (!mounted) return;
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const LogginView()));
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -76,8 +86,7 @@ class _SignupViewState extends State<SignupView> {
               TextField(
                 controller: repasswordController,
                 decoration: InputDecoration(
-                    label: const Text('Enter Re-password'),
-                    errorText: erorrPassword),
+                    label: const Text('Re-password'), errorText: erorrPassword),
               ),
               const SizedBox(height: 10),
               const SizedBox(height: 20),
