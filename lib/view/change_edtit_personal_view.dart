@@ -33,24 +33,33 @@ class _ChangeEdtitPersonalViewState extends State<ChangeEdtitPersonalView> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          leading: Stack(
             children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  icon: const Icon(Icons.chevron_left)),
-              const Text('Edit personal page'),
-              GestureDetector(
-                onTap: editusername,
-                child: const Text(
-                  'Finished',
-                  style: TextStyle(color: Colors.blue),
-                ),
+              AnimatedPositioned(
+                top: 15,
+                left: -6,
+                duration: const Duration(seconds: 0),
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: const Icon(
+                      Icons.chevron_left_outlined,
+                      applyTextScaling: false,
+                    )),
               )
             ],
           ),
+          title: const Center(child: Text('Edit personal page')),
+          actions: [
+            GestureDetector(
+              onTap: editusername,
+              child: const Text(
+                'Finished',
+                style: TextStyle(color: Colors.blue),
+              ),
+            )
+          ],
         ),
         body: Padding(
             padding: const EdgeInsets.all(0.8),

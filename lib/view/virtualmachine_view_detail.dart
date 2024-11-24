@@ -28,8 +28,25 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.event.name),
-        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: Stack(
+          children: [
+            AnimatedPositioned(
+              top: 15,
+              left: -6,
+              duration: const Duration(seconds: 0),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Icon(
+                    Icons.chevron_left_outlined,
+                    applyTextScaling: false,
+                  )),
+            )
+          ],
+        ),
+        title: Center(child: Text(widget.event.name)),
       ),
       body: SingleChildScrollView(
         child: Column(

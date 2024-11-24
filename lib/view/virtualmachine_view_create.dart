@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/dbHelper/mongodb.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
 
@@ -40,25 +41,36 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     event.name = nameController.text;
     event.status = dropdownValue;
     await eventService.saveEvent(event);
+    var messenger = await Mongodb.insert(event);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(messenger)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                  onPressed: () {
+        automaticallyImplyLeading: false,
+        leading: Stack(
+          children: [
+            AnimatedPositioned(
+              top: 15,
+              left: -6,
+              duration: const Duration(seconds: 0),
+              child: GestureDetector(
+                  onTap: () {
                     Navigator.of(context).pop(true);
                   },
-                  icon: const Icon(Icons.chevron_left)),
-              const Text('CREATE ITEM VIRTUAL MACHINE'),
-              const SizedBox(width: 10)
-            ],
-          )),
+                  child: const Icon(
+                    Icons.chevron_left_outlined,
+                    applyTextScaling: false,
+                  )),
+            )
+          ],
+        ),
+        title: const Center(child: Text('Add Item Virtual Machine')),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(0.8),
         child: Column(

@@ -3,7 +3,8 @@ import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/service/user_service.dart';
 import 'package:flutter_project/view/change_edtit_personal_view.dart';
 import 'package:flutter_project/view/change_password_view.dart';
-import 'package:flutter_project/view/virtualmachine_view.dart';
+import 'package:flutter_project/view/loggin_view.dart';
+
 
 class UserDetail extends StatefulWidget {
   final UserModel event;
@@ -31,21 +32,26 @@ class _UserDetailState extends State<UserDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) =>
-                            VirtualmachineView(event: widget.event)));
+        automaticallyImplyLeading: false,
+        leading: Stack(
+          children: [
+            AnimatedPositioned(
+              top: 15,
+              left: -6,
+              duration: const Duration(seconds: 0),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(true);
                   },
-                  icon: const Icon(Icons.chevron_left)),
-              const Text('User Deatail'),
-              const SizedBox(width: 10)
-            ],
-          )),
+                  child: const Icon(
+                    Icons.chevron_left_outlined,
+                    applyTextScaling: false,
+                  )),
+            )
+          ],
+        ),
+        title: const Center(child: Text('User detail')),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(0.8),
         child: Column(
@@ -141,7 +147,8 @@ class _UserDetailState extends State<UserDetail> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop(true);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LogginView()));
                     },
                     child: const Text('Signout'),
                   )

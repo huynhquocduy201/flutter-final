@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
+VirtualmachineModel mogoDbModelFromJson(String str) =>
+  VirtualmachineModel.fromJson(json.decode(str));
+String mongoDbModelToJson(VirtualmachineModel data) => json.encode(data.toJson());
 class VirtualmachineModel {
   String id;
   String name;
@@ -68,11 +70,31 @@ class VirtualmachineModel {
       status: map['status'] as String,
     );
   }
+String toJsonofMap() => json.encode(toMap());
 
-  String toJson() => json.encode(toMap());
+factory VirtualmachineModel.fromJsonofMap(String source) =>
+  VirtualmachineModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'gpu': gpu,
+        'cpu': cpu,
+        'ram': ram,
+        'price': price,
+        'description': description,
+        'status': status,
+      };
+  factory VirtualmachineModel.fromJson(Map<String, dynamic> json) => VirtualmachineModel(
+        id: json["id"],
+        name: json["name"],
+        gpu:json["gpu"],
+        cpu: json["cpu"],
+        ram: json["ram"],
+        price: json["price"],
+        description: json["description"] ,
+        status: json["status"],
 
-  factory VirtualmachineModel.fromJson(String source) =>
-      VirtualmachineModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  );
 
   @override
   bool operator ==(covariant VirtualmachineModel other) {

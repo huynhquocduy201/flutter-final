@@ -17,8 +17,8 @@ void main() {
     final findtapChangePassword =
         find.widgetWithText(GestureDetector, 'Change password');
     expect(findtapChangePassword, findsNWidgets(2));
-    
-    final findtapEditPersonal=
+
+    final findtapEditPersonal =
         find.widgetWithText(GestureDetector, 'Edit personal page');
     expect(findtapEditPersonal, findsNWidgets(2));
     //await tester.tap(findtapChangePassword.first);

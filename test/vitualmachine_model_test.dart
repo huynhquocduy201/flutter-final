@@ -24,8 +24,7 @@ void main() {
       expect(event.description, 'No Content');
       expect(event.status, 'No Users');
     });
-
-    test('VirtualmachineModel toMap and fromMap', () {
+test('VirtualmachineModel toMap and fromMap', () {
       final event = VirtualmachineModel(
           id: '1',
           name: 'máy 1',
@@ -53,11 +52,12 @@ void main() {
           description: 'No Content',
           status: 'No Users');
 
-      final jsonStr = event.toJson();
-      final newevent = VirtualmachineModel.fromJson(jsonStr);
+      final jsonStr = event.toJsonofMap();
+      final newevent = VirtualmachineModel.fromJsonofMap(jsonStr);
 
       expect(newevent, equals(event));
     });
+  
 
     test('VirtualmachineModel copyWith', () {
       final event = VirtualmachineModel(

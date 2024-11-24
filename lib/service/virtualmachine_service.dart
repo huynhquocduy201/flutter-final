@@ -33,4 +33,6 @@ class VirtualmachineService {
     }
     await db.collection(path).doc(item.id).delete();
   }
+
+
 }
