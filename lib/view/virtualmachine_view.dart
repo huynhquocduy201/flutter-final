@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_project/dbHelper/mongodb.dart';
+
 import 'package:flutter_project/model/user_model.dart';
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/user_service.dart';
@@ -11,6 +14,17 @@ import 'package:flutter_project/view/user_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_create.dart';
 import 'package:flutter_project/view/virtualmachine_view_detail.dart';
 import 'package:flutter_project/view/virtualmachine_view_update.dart';
+import 'package:http/http.dart' as http;
+
+String getBackendUrl() {
+  if (kIsWeb) {
+    return 'http://localhost:8080';
+  } else if (Platform.isAndroid) {
+    return 'http://10.0.2.2:8080';
+  } else {
+    return 'http://localhost:8080';
+  }
+}
 
 class VirtualmachineView extends StatefulWidget {
   final UserModel event;
@@ -26,6 +40,9 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   final eventService = VirtualmachineService();
   final userService = UserService();
   List<VirtualmachineModel> items = [];
+  final _todo = <VirtualmachineModel>[];
+  final _headers = {'Content-Type': 'application/json'};
+  final url = '${getBackendUrl()}/api/v1/todos';
   String username = '';
   @override
   void initState() {
@@ -40,6 +57,18 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   void dispose() {
     _connectivitySubscription.cancel();
     super.dispose();
+  }
+
+  Future<void> _fetchTodos() async {
+    final res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+      final List<dynamic> todoList = json.decode(res.body);
+      setState(() {
+        _todo.clear();
+        _todo.addAll(
+            todoList.map((e) => VirtualmachineModel.fromMap(e)).toList());
+      });
+    }
   }
 
   Future<void> loadEvents() async {
@@ -57,25 +86,27 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 
   Future<void> _updateConnectionStatus(
       List<ConnectivityResult> connectivityResult) async {
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      loadEvents();
-      setState(() {
-        isCheckingConnection = false;
-      });
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Bạn đang ngoại tuyến')));
-    } else {
-      if (!Mongodb.db.isConnected) {
-        await Mongodb.connect();
-      }
+    try {
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        loadEvents();
+        setState(() {
+          isCheckingConnection = false;
+        });
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Bạn đang ngoại tuyến')));
+      } else {
+        _fetchTodos();
+        setState(() {
+          isCheckingConnection = true;
 
-      setState(() {
-        isCheckingConnection = true;
-      });
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bạn đang kết nối internet')));
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Bạn đang kết nối internet')));
+        });
+      }
+    } catch (e) {
+      print('Error:$e');
     }
   }
 
@@ -145,181 +176,8 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
       body: Padding(
           padding: const EdgeInsets.all(0.8),
           child: !isCheckingConnection
-              ? ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items.elementAt(index);
-
-                    return GestureDetector(
-                      onLongPress: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (context) => VirtualmachineViewDetail(
-                                      event: item,
-                                    )))
-                            .then((value) async {
-                          if (value == true) {
-                            await loadEvents();
-                          }
-                        });
-                      },
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item.name),
-                            Row(
-                              children: [
-                                Text(item.gpu),
-                                const SizedBox(width: 10),
-                                Text(item.cpu),
-                                const SizedBox(width: 10),
-                                Text(item.ram),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Status:${item.status}'),
-                                    const SizedBox(height: 15),
-                                    Text('Price:${item.price}'),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          _delteteEvents(item);
-                                          loadEvents();
-                                        },
-                                        icon: const Icon(Icons.delete)),
-                                    IconButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      VirtualmachineViewUpdate(
-                                                          event: item)))
-                                              .then((value) async {
-                                            if (value == true) {
-                                              await loadEvents();
-                                            }
-                                          });
-                                        },
-                                        icon: const Icon(Icons.edit))
-                                  ],
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : FutureBuilder(
-                  future: Mongodb.getData(),
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (snapshot.hasData) {
-                      var totalData = snapshot.data.length;
-                      print('Total Data' + totalData.toString());
-                      return ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          final item = VirtualmachineModel.fromJson(
-                              snapshot.data[index]);
-
-                          return GestureDetector(
-                            onLongPress: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          VirtualmachineViewDetail(
-                                            event: item,
-                                          )))
-                                  .then((value) async {
-                                if (value == true) {
-                                  await loadEvents();
-                                }
-                              });
-                            },
-                            child: Card(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item.name),
-                                  Row(
-                                    children: [
-                                      Text(item.gpu),
-                                      const SizedBox(width: 10),
-                                      Text(item.cpu),
-                                      const SizedBox(width: 10),
-                                      Text(item.ram),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Status:${item.status}'),
-                                          const SizedBox(height: 15),
-                                          Text('Price:${item.price}'),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                              onPressed: () async {
-                                                await Mongodb.delete(item);
-                                                setState(() {});
-                                                _delteteEvents(item);
-                                                loadEvents();
-                                              },
-                                              icon: const Icon(Icons.delete)),
-                                          IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            VirtualmachineViewUpdate(
-                                                                event: item)))
-                                                    .then((value) async {
-                                                  if (value == true) {
-                                                    await loadEvents();
-                                                  }
-                                                });
-                                              },
-                                              icon: const Icon(Icons.edit))
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(child: Text('Not Found Data'));
-                    }
-                  })),
+              ? const Text('Bạn không kết nối Internet')
+              : const Text('Bạn đã kết nối Internet')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)

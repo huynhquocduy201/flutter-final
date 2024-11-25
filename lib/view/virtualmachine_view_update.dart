@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/dbHelper/mongodb.dart';
+
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
 
@@ -49,7 +49,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
         description: widget.event.description,
         status: widget.event.status);
     await eventService.saveEvent(updatedata);
-    await Mongodb.update(widget.event);
+   
     if (!mounted) return;
     Navigator.of(context).pop(true);
   }

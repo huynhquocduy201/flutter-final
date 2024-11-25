@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/dbHelper/mongodb.dart';
+
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
 
@@ -41,10 +41,8 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     event.name = nameController.text;
     event.status = dropdownValue;
     await eventService.saveEvent(event);
-    var messenger = await Mongodb.insert(event);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(messenger)));
+  
+   
   }
 
   @override

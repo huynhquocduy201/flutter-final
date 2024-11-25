@@ -1,28 +1,28 @@
 import 'dart:developer';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_project/dbHelper/constant.dart';
-import 'package:flutter_project/model/virtualmachine_model.dart';
+
+import '../model/virtualmachine_model.dart';
+import 'constant.dart';
+
 import 'package:mongo_dart/mongo_dart.dart';
 
 class Mongodb {
   static var db, userCollection;
+
   static connect() async {
-    final List<ConnectivityResult> connectivityResult =
-        await (Connectivity().checkConnectivity());
-    if (!connectivityResult.contains(ConnectivityResult.none)) {
-      db = await Db.create(MONGO_CONN_URL);
-      await db.open();
-      inspect(db);
-      userCollection = db.collection(USER_COLLECTION);
-    }
+    db = await Db(MONGO_CONN_URL);
+    await db.open();
+    inspect(db);
+    userCollection = db.collection(USER_COLLECTION);
   }
 
   static Future<List<Map<String, dynamic>>> getData() async {
+    
     final arrData = await userCollection.find().toList();
     return arrData;
   }
 
   static Future<String> insert(VirtualmachineModel data) async {
+ 
     try {
       var db = await userCollection.insertOne(data.toJson());
       if (db.isSuccess) {
@@ -37,10 +37,12 @@ class Mongodb {
   }
 
   static delete(VirtualmachineModel data) async {
+  
     await userCollection.deleteOne({'id': data.id});
   }
 
   static Future<void> update(VirtualmachineModel data) async {
+
     var filter = where.eq('id', data.id);
     var update = modify
         .set('name', data.name)
@@ -55,3 +57,4 @@ class Mongodb {
     inspect(response);
   }
 }
+
