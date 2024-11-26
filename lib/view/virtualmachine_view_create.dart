@@ -30,6 +30,7 @@ class VirtualmachineViewCreate extends StatefulWidget {
 class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   bool isCheckingConnection = false;
   bool isStart = true;
+  bool isConnect = false;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final _headers = {'Content-Type': 'application/json'};
   final url = '${getBackendUrl()}/api/v1/todos';
@@ -76,8 +77,8 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     event.status = dropdownValue;
     await eventService.saveEvent(event);
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Bạn đã thêm thành công')));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Center(child: Text('Bạn đã thêm thành công'))));
     nameController.clear();
     ramController.clear();
     gpuController.clear();
@@ -91,18 +92,22 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     final events = await eventService.getAllEvents();
     items = events;
     if (items.isNotEmpty) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hệ thống bắt đầu đồng bộ ')));
+      if (isConnect) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Center(child: Text('Hệ thống bắt đầu đồng bộ '))));
+      }
 
       await http.post(
         Uri.parse(urlasync),
         headers: _headers,
         body: json.encode(items),
       );
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Đã đồng bộ xong')));
+      if (isConnect) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Center(child: Text('Đã đồng bộ xong'))));
+      }
     }
   }
 
@@ -114,6 +119,19 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     event.description = descriptionControoler.text;
     event.name = nameController.text;
     event.status = dropdownValue;
+    if (isConnect) {
+      List<VirtualmachineModel> items = [];
+      final events = await eventService.getAllEvents();
+      items = events;
+      if (items.isNotEmpty) {
+        await http.post(
+          Uri.parse(urlasync),
+          headers: _headers,
+          body: json.encode(items),
+        );
+        isConnect = false;
+      }
+    }
 
     final res = await http.post(
       Uri.parse(url),
@@ -122,8 +140,8 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     );
     if (res.statusCode == 200) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bạn đã thêm thành công')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text('Bạn đã thêm thành công'))));
       nameController.clear();
       ramController.clear();
       gpuController.clear();
@@ -148,14 +166,18 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         });
         if (!isStart) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Bạn đang ngoại tuyến')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Bạn đang ngoại tuyến'))));
         }
         isStart = false;
+        isConnect = true;
       } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Bạn đang kết nối internet')));
+        if (isConnect) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Bạn đã kết nối internet'))));
+        }
+
         _asyncData();
         setState(() {
           isCheckingConnection = true;

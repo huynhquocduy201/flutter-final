@@ -37,6 +37,7 @@ class VirtualmachineView extends StatefulWidget {
 class _VirtualmachineViewState extends State<VirtualmachineView> {
   bool isCheckingConnection = false;
   bool isStart = true;
+  bool isConnect = false;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final eventService = VirtualmachineService();
   final userService = UserService();
@@ -68,18 +69,23 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 
     if (res.statusCode == 200) {
       if (items.isNotEmpty) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Hệ thống bắt đầu đồng bộ ')));
+        if (isConnect) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Hệ thống bắt đầu đồng bộ '))));
+        }
 
         final resasync = await http.post(
           Uri.parse(urlasync),
           headers: _headers,
           body: json.encode(items),
         );
-        if (!mounted) return;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Đã đồng bộ xong')));
+        if (isConnect) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Center(child: Text('Đã đồng bộ xong'))));
+        }
+
         final List<dynamic> todoListAsync = json.decode(resasync.body);
         setState(() {
           _todo.clear();
@@ -100,8 +106,8 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 
     if (res.statusCode == 200) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bạn đã xoá thành công ')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text('Bạn đã xoá thành công '))));
       final res = await http.get(Uri.parse(url));
       if (res.statusCode == 200) {
         final List<dynamic> todoList = json.decode(res.body);
@@ -137,14 +143,18 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         });
         if (!isStart) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Bạn đang ngoại tuyến')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Bạn đang ngoại tuyến'))));
         }
         isStart = false;
+        isConnect = true;
       } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Bạn đang kết nối internet')));
+        if (isConnect) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Bạn đã kết nối internet'))));
+        }
+
         loadEvents();
         _fetchTodos();
 
@@ -170,9 +180,6 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 
   Future<void> _delteteEvents(event) async {
     await eventService.deleteEvent(event);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Bạn đã xoá thành công ')));
   }
 
   @override
