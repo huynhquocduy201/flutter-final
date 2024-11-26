@@ -16,13 +16,11 @@ class Mongodb {
   }
 
   static Future<List<Map<String, dynamic>>> getData() async {
-    
     final arrData = await userCollection.find().toList();
     return arrData;
   }
 
   static Future<String> insert(VirtualmachineModel data) async {
- 
     try {
       var db = await userCollection.insertOne(data.toJson());
       if (db.isSuccess) {
@@ -36,13 +34,21 @@ class Mongodb {
     }
   }
 
+  static Future<void> asyncData(List<Map<String, dynamic>> data) async {
+    await userCollection.remove({});
+    await userCollection.insertAll(data);
+  }
+
   static delete(VirtualmachineModel data) async {
-  
     await userCollection.deleteOne({'id': data.id});
   }
 
-  static Future<void> update(VirtualmachineModel data) async {
+  static Future<dynamic> finddata(VirtualmachineModel data) async {
+    var datafind = await userCollection.findOne({'id': data.id});
+    return datafind;
+  }
 
+  static Future<void> update(VirtualmachineModel data) async {
     var filter = where.eq('id', data.id);
     var update = modify
         .set('name', data.name)
@@ -57,4 +63,3 @@ class Mongodb {
     inspect(response);
   }
 }
-

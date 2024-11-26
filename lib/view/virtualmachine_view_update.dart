@@ -1,7 +1,23 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_project/model/virtualmachine_model.dart';
 import 'package:flutter_project/service/virtualmachine_service.dart';
+
+String getBackendUrl() {
+  if (kIsWeb) {
+    return 'http://localhost:8080';
+  } else if (Platform.isAndroid) {
+    return 'http://10.0.2.2:8080';
+  } else {
+    return 'http://localhost:8080';
+  }
+}
 
 class VirtualmachineViewUpdate extends StatefulWidget {
   final VirtualmachineModel event;
@@ -13,6 +29,11 @@ class VirtualmachineViewUpdate extends StatefulWidget {
 }
 
 class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
+  bool isCheckingConnection = false;
+  bool isStart = true;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  final _headers = {'Content-Type': 'application/json'};
+  final url = '${getBackendUrl()}/api/v1/todos';
   final nameController = TextEditingController();
   final ramController = TextEditingController();
   final gpuController = TextEditingController();
@@ -21,6 +42,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
   final descriptionControoler = TextEditingController();
   final eventService = VirtualmachineService();
   String dropdownValue = 'No users';
+  final urlasync = '${getBackendUrl()}/api/v1/todos/async';
   @override
   void initState() {
     super.initState();
@@ -30,6 +52,40 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     cpuControoler.text = widget.event.cpu;
     priceControoler.text = widget.event.price.toString();
     descriptionControoler.text = widget.event.description;
+    _initConnection();
+
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> _asyncData() async {
+  
+    List<VirtualmachineModel> items = [];
+    final events = await eventService.getAllEvents();
+    items = events;
+    if(items.isNotEmpty){
+  if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Hệ thống bắt đầu đồng bộ ')));
+       
+        await http.post(
+          Uri.parse(urlasync),
+          headers: _headers,
+          body: json.encode(items),
+        );
+         if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Đã đồng bộ xong')));
+    }
+        
+      
+    
   }
 
   Future<void> _saveEvent() async {
@@ -49,9 +105,66 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
         description: widget.event.description,
         status: widget.event.status);
     await eventService.saveEvent(updatedata);
-   
-    if (!mounted) return;
-    Navigator.of(context).pop(true);
+     if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Bạn đã cập nhật thành công')));
+  }
+
+  Future<void> _updateTodos() async {
+    widget.event.name = nameController.text;
+    widget.event.ram = ramController.text;
+    widget.event.cpu = cpuControoler.text;
+    widget.event.gpu = gpuController.text;
+    widget.event.price = double.tryParse(priceControoler.text);
+    widget.event.description = descriptionControoler.text;
+    widget.event.status = dropdownValue;
+
+    final res = await http.put(
+      Uri.parse(url),
+      headers: _headers,
+      body: json.encode(widget.event.toMap()),
+    );
+    if (res.statusCode == 200) {
+ if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Bạn đã cập nhật thành công')));
+
+    }
+  }
+
+  Future<void> _initConnection() async {
+    List<ConnectivityResult> result =
+        await (Connectivity().checkConnectivity());
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(
+      List<ConnectivityResult> connectivityResult) async {
+    try {
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        setState(() {
+          isCheckingConnection = false;
+        });
+      if (!isStart) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Bạn đang ngoại tuyến')));
+        }
+        isStart = false;
+      } else {
+           if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Bạn đang kết nối internet')));
+        _asyncData();
+        setState(() {
+          isCheckingConnection = true;
+
+       
+        });
+      }
+    } catch (e) {
+      print('Error:$e');
+    }
   }
 
   @override
@@ -156,7 +269,16 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                       ],
                     ),
                     FilledButton.icon(
-                      onPressed: _saveEvent,
+                      onPressed: isCheckingConnection
+                          ? () {
+                              _updateTodos();
+                              _saveEvent();
+                              Navigator.of(context).pop(true);
+                            }
+                          : () {
+                              _saveEvent();
+                              Navigator.of(context).pop(true);
+                            },
                       label: const Text('Update sự kiện'),
                     )
                   ],
