@@ -47,6 +47,8 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   final urlasync = '${getBackendUrl()}/api/v1/todos/async';
   final _headers = {'Content-Type': 'application/json'};
   String username = '';
+  String? dropdownValue;
+
   @override
   void initState() {
     super.initState();
@@ -76,12 +78,14 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
       }
     }
   }
+
 //Hàm lọc những máy không có người thuê
-  Future<void> _FilterData() async {
+
+  Future<void> FilterData() async {
     final events = await eventService.getAllEvents();
-    events.map((item) => {
-      if(item.status== 'No users')
-      items.add(item)
+    events.map((item) => {if (item.status == 'No users') items.add(item)});
+    setState(() {
+      items;
     });
   }
 
@@ -218,201 +222,248 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                 height: 2.0, // Độ dày của border dưới
               )),
           actions: [
-            Container(
-              padding: const EdgeInsets.all(0.8),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+            Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(0.8),
+                  child: Row(
                     children: [
-                      const SizedBox(height: 10),
-                      Text(username != '' ? username : widget.event.username),
-                      const Text('Admin')
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(username != ''
+                              ? username
+                              : widget.event.username),
+                          const Text('Admin')
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      GestureDetector(
+                        onTap: () => {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) => UserDetail(
+                                        event: widget.event,
+                                      )))
+                              .then((value) async {
+                            if (value == true) {
+                              loadUsername();
+                            }
+                          })
+                        },
+                        child: const CircleAvatar(
+                          radius: 20,
+                          child: Icon(Icons.person),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () => {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => UserDetail(
-                                    event: widget.event,
-                                  )))
-                          .then((value) async {
-                        if (value == true) {
-                          loadUsername();
-                        }
-                      })
-                    },
-                    child: const CircleAvatar(
-                      radius: 20,
-                      child: Icon(Icons.person),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            )
           ]),
       body: Padding(
           padding: const EdgeInsets.all(0.8),
-          child: !isCheckingConnection
-              ? ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items.elementAt(index);
+          child: Column(
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                DropdownButton<String>(
+                  value: dropdownValue,
+                  hint: const Text('Sort by Status'),
+                  icon: const Icon(Icons.arrow_drop_down),
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                    if (dropdownValue == 'No users') {
+                      FilterData();
+                    }
+                  },
+                  items: const [
+                    DropdownMenuItem<String>(
+                      value: 'No users',
+                      child: Text('No users'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'There are users',
+                      child: Text('There are users'),
+                    ),
+                  ],
+                ),
+              ]),
+              Expanded(
+                  child: !isCheckingConnection
+                      ? ListView.builder(
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            final item = items.elementAt(index);
 
-                    return GestureDetector(
-                      onLongPress: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (context) => VirtualmachineViewDetail(
-                                      event: item,
-                                    )))
-                            .then((value) async {
-                          if (value == true) {
-                            await loadEvents();
-                          }
-                        });
-                      },
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item.name),
-                            Row(
-                              children: [
-                                Text(item.gpu),
-                                const SizedBox(width: 10),
-                                Text(item.cpu),
-                                const SizedBox(width: 10),
-                                Text(item.ram),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
+                            return GestureDetector(
+                              onLongPress: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            VirtualmachineViewDetail(
+                                              event: item,
+                                            )))
+                                    .then((value) async {
+                                  if (value == true) {
+                                    await loadEvents();
+                                  }
+                                });
+                              },
+                              child: Card(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Status:${item.status}'),
-                                    const SizedBox(height: 15),
-                                    Text('Price:${item.price}'),
+                                    Text(item.name),
+                                    Row(
+                                      children: [
+                                        Text(item.gpu),
+                                        const SizedBox(width: 10),
+                                        Text(item.cpu),
+                                        const SizedBox(width: 10),
+                                        Text(item.ram),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Status:${item.status}'),
+                                            const SizedBox(height: 15),
+                                            Text('Price:${item.price}'),
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  _delteteEvents(item);
+                                                  loadEvents();
+                                                },
+                                                icon: const Icon(Icons.delete)),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              VirtualmachineViewUpdate(
+                                                                  event: item)))
+                                                      .then((value) async {
+                                                    if (value == true) {
+                                                      await loadEvents();
+                                                    }
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.edit))
+                                          ],
+                                        )
+                                      ],
+                                    )
                                   ],
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          _delteteEvents(item);
-                                          loadEvents();
-                                        },
-                                        icon: const Icon(Icons.delete)),
-                                    IconButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      VirtualmachineViewUpdate(
-                                                          event: item)))
-                                              .then((value) async {
-                                            if (value == true) {
-                                              await loadEvents();
-                                            }
-                                          });
-                                        },
-                                        icon: const Icon(Icons.edit))
-                                  ],
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : ListView.builder(
-                  itemCount: _todo.length,
-                  itemBuilder: (context, index) {
-                    final item = _todo.elementAt(index);
+                              ),
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          itemCount: _todo.length,
+                          itemBuilder: (context, index) {
+                            final item = _todo.elementAt(index);
 
-                    return GestureDetector(
-                      onLongPress: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (context) => VirtualmachineViewDetail(
-                                      event: item,
-                                    )))
-                            .then((value) async {
-                          if (value == true) {
-                            await loadEvents();
-                          }
-                        });
-                      },
-                      child: _todo.isEmpty
-                          ? const CircularProgressIndicator()
-                          : Card(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item.name),
-                                  Row(
-                                    children: [
-                                      Text(item.gpu),
-                                      const SizedBox(width: 10),
-                                      Text(item.cpu),
-                                      const SizedBox(width: 10),
-                                      Text(item.ram),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
+                            return GestureDetector(
+                              onLongPress: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            VirtualmachineViewDetail(
+                                              event: item,
+                                            )))
+                                    .then((value) async {
+                                  if (value == true) {
+                                    await loadEvents();
+                                  }
+                                });
+                              },
+                              child: _todo.isEmpty
+                                  ? const CircularProgressIndicator()
+                                  : Card(
+                                      child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('Status:${item.status}'),
-                                          const SizedBox(height: 15),
-                                          Text('Price:${item.price}'),
+                                          Text(item.name),
+                                          Row(
+                                            children: [
+                                              Text(item.gpu),
+                                              const SizedBox(width: 10),
+                                              Text(item.cpu),
+                                              const SizedBox(width: 10),
+                                              Text(item.ram),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Status:${item.status}'),
+                                                  const SizedBox(height: 15),
+                                                  Text('Price:${item.price}'),
+                                                ],
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        _delteteEvents(item);
+                                                        _deleteTodos(item);
+                                                      },
+                                                      icon: const Icon(
+                                                          Icons.delete)),
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    VirtualmachineViewUpdate(
+                                                                        event:
+                                                                            item)))
+                                                            .then(
+                                                                (value) async {
+                                                          if (value == true) {
+                                                            await loadEvents();
+                                                          }
+                                                        });
+                                                      },
+                                                      icon: const Icon(
+                                                          Icons.edit))
+                                                ],
+                                              )
+                                            ],
+                                          )
                                         ],
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                              onPressed: () {
-                                                _delteteEvents(item);
-                                                _deleteTodos(item);
-                                              },
-                                              icon: const Icon(Icons.delete)),
-                                          IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            VirtualmachineViewUpdate(
-                                                                event: item)))
-                                                    .then((value) async {
-                                                  if (value == true) {
-                                                    await loadEvents();
-                                                  }
-                                                });
-                                              },
-                                              icon: const Icon(Icons.edit))
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                    );
-                  },
-                )),
+                                    ),
+                            );
+                          },
+                        ))
+            ],
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
