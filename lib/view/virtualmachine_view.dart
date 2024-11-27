@@ -62,6 +62,29 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     super.dispose();
   }
 
+//Hàm sắp xếp theo giá thuê  máy
+  Future<void> _sortData() async {
+    final events = await eventService.getAllEvents();
+    items = events;
+    int n = items.length;
+    for (int i = 0; i < n - 1; i++) {
+      int maxValue = i;
+      for (int j = i + 1; j < n; j++) {
+        if (items[j].price > items[maxValue].price) {
+          maxValue = j;
+        }
+      }
+    }
+  }
+//Hàm lọc những máy không có người thuê
+  Future<void> _FilterData() async {
+    final events = await eventService.getAllEvents();
+    events.map((item) => {
+      if(item.status== 'No users')
+      items.add(item)
+    });
+  }
+
   Future<void> _fetchTodos() async {
     final events = await eventService.getAllEvents();
     items = events;

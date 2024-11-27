@@ -94,7 +94,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     widget.event.ram = ramController.text;
     widget.event.cpu = cpuControoler.text;
     widget.event.gpu = gpuController.text;
-    widget.event.price = double.tryParse(priceControoler.text);
+    widget.event.price = double.parse(priceControoler.text);
     widget.event.description = descriptionControoler.text;
     widget.event.status = dropdownValue;
     final updatedata = VirtualmachineModel(
@@ -103,6 +103,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
         gpu: widget.event.gpu,
         cpu: widget.event.cpu,
         ram: widget.event.ram,
+        price:widget.event.price,
         description: widget.event.description,
         status: widget.event.status);
     await eventService.saveEvent(updatedata);
@@ -113,7 +114,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     widget.event.ram = ramController.text;
     widget.event.cpu = cpuControoler.text;
     widget.event.gpu = gpuController.text;
-    widget.event.price = double.tryParse(priceControoler.text);
+    widget.event.price = double.parse(priceControoler.text);
     widget.event.description = descriptionControoler.text;
     widget.event.status = dropdownValue;
     if (isConnect) {

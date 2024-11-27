@@ -9,7 +9,7 @@ class VirtualmachineModel {
   String gpu;
   String cpu;
   String ram;
-  double? price;
+  double price;
   String description;
   String status;
   VirtualmachineModel({
@@ -18,7 +18,7 @@ class VirtualmachineModel {
     required this.gpu,
     required this.cpu,
     required this.ram,
-    this.price,
+    required this.price,
     required this.description,
     required this.status,
   });
@@ -65,7 +65,7 @@ class VirtualmachineModel {
       gpu: map['gpu'] as String,
       cpu: map['cpu'] as String,
       ram: map['ram'] as String,
-      price: map['price'] != null ? map['price'] as double : null,
+      price: map['price']  as double ,
       description: map['description'] as String,
       status: map['status'] as String,
     );

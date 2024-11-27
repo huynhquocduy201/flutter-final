@@ -70,7 +70,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   Future<void> _addEvent() async {
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
-    event.price = double.tryParse(priceControoler.text);
+    event.price = double.parse(priceControoler.text);
     event.ram = ramController.text;
     event.description = descriptionControoler.text;
     event.name = nameController.text;
@@ -114,7 +114,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   Future<void> _addTodos() async {
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
-    event.price = double.tryParse(priceControoler.text);
+    event.price = double.parse(priceControoler.text);
     event.ram = ramController.text;
     event.description = descriptionControoler.text;
     event.name = nameController.text;
