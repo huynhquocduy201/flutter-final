@@ -48,7 +48,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   final _headers = {'Content-Type': 'application/json'};
   String username = '';
   String? dropdownValue;
-
+  String? dropdownValueSort;
   @override
   void initState() {
     super.initState();
@@ -67,26 +67,81 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
 //Hàm sắp xếp theo giá thuê  máy
   Future<void> _sortData() async {
     final events = await eventService.getAllEvents();
-    items = events;
-    int n = items.length;
-    for (int i = 0; i < n - 1; i++) {
-      int maxValue = i;
-      for (int j = i + 1; j < n; j++) {
-        if (items[j].price > items[maxValue].price) {
-          maxValue = j;
+    if (dropdownValueSort == 'decrease') {
+      items = events;
+      int n = items.length;
+      for (int i = 0; i < n - 1; i++) {
+        int maxValue = i;
+        for (int j = i + 1; j < n; j++) {
+          if (items[j].price > items[maxValue].price) {
+            maxValue = j;
+          }
         }
       }
+      setState(() {
+        items;
+      });
+    }
+    if (dropdownValueSort == 'increase') {
+      items = events;
+      int n = items.length;
+      for (int i = 0; i < n - 1; i++) {
+        int minValue = i;
+        for (int j = i + 1; j < n; j++) {
+          if (items[j].price < items[minValue].price) {
+            minValue = j;
+          }
+        }
+      }
+      setState(() {
+        items;
+      });
     }
   }
 
 //Hàm lọc những máy không có người thuê
 
-  Future<void> FilterData() async {
+  Future<void> _filterData() async {
     final events = await eventService.getAllEvents();
-    events.map((item) => {if (item.status == 'No users') items.add(item)});
-    setState(() {
-      items;
-    });
+    if (dropdownValue == 'No users') {
+      items.clear();
+
+      Iterable<VirtualmachineModel?> data = events.map((item) {
+        if (item.status == 'No users') {
+          return item;
+        }
+        return null;
+      });
+      List<VirtualmachineModel> listData = data
+          .where((item) => item != null)
+          .cast<VirtualmachineModel>()
+          .toList();
+      setState(() {
+        items = listData;
+      });
+    }
+    if (dropdownValue == 'There are users') {
+      items.clear();
+
+      Iterable<VirtualmachineModel?> data = events.map((item) {
+        if (item.status == 'There are users') {
+          return item;
+        }
+        return null;
+      });
+      List<VirtualmachineModel> listData = data
+          .where((item) => item != null)
+          .cast<VirtualmachineModel>()
+          .toList();
+      setState(() {
+        items = listData;
+      });
+    }
+    if (dropdownValue == 'All') {
+      setState(() {
+        items = events;
+      });
+    }
   }
 
   Future<void> _fetchTodos() async {
@@ -277,9 +332,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                     setState(() {
                       dropdownValue = newValue!;
                     });
-                    if (dropdownValue == 'No users') {
-                      FilterData();
-                    }
+                    _filterData();
                   },
                   items: const [
                     DropdownMenuItem<String>(
@@ -287,8 +340,35 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                       child: Text('No users'),
                     ),
                     DropdownMenuItem<String>(
+                      value: 'All',
+                      child: Text('All'),
+                    ),
+                    DropdownMenuItem<String>(
                       value: 'There are users',
                       child: Text('There are users'),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 5),
+                DropdownButton<String>(
+                  value: dropdownValueSort,
+                  hint: const Text('Sort by price'),
+                  icon: const Icon(Icons.arrow_drop_down),
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValueSort= newValue!;
+                    });
+                    _sortData();
+                  },
+                  items: const [
+                    DropdownMenuItem<String>(
+                      value: 'increase',
+                      child: Text('increase'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'decrease',
+                      child: Text('decrease'),
                     ),
                   ],
                 ),
