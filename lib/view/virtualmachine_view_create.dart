@@ -68,6 +68,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   }
 
   Future<void> _addEvent() async {
+    event.id = '';
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
     event.price = double.parse(priceControoler.text);

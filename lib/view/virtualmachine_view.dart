@@ -45,6 +45,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   final _todo = <VirtualmachineModel>[];
   final url = '${getBackendUrl()}/api/v1/todos';
   final urlasync = '${getBackendUrl()}/api/v1/todos/async';
+  final urlfilter = '${getBackendUrl()}/api/v1/todos/filterdata';
   final _headers = {'Content-Type': 'application/json'};
   String username = '';
   String? dropdownValue;
@@ -77,6 +78,11 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
             maxValue = j;
           }
         }
+        if (maxValue != i) {
+          VirtualmachineModel temp = items[i];
+          items[i] = items[maxValue];
+          items[maxValue] = temp;
+        }
       }
       setState(() {
         items;
@@ -92,11 +98,82 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
             minValue = j;
           }
         }
+        if (minValue != i) {
+          VirtualmachineModel temp = items[i];
+          items[i] = items[minValue];
+          items[minValue] = temp;
+        }
       }
       setState(() {
         items;
       });
     }
+  }
+
+  Future<void> _sortTodo() async {
+    final res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+     
+        final List<dynamic> todoListAsync = json.decode(res.body);
+ if (todoListAsync.isNotEmpty) {
+        _todo.clear();
+        _todo.addAll(
+            todoListAsync.map((e) => VirtualmachineModel.fromMap(e)).toList());
+        if (dropdownValueSort == 'decrease') {
+          int n = _todo.length;
+          for (int i = 0; i < n - 1; i++) {
+            int maxValue = i;
+            for (int j = i + 1; j < n; j++) {
+              if (_todo[j].price > _todo[maxValue].price) {
+                maxValue = j;
+              }
+            }
+            if (maxValue != i) {
+              VirtualmachineModel temp = _todo[i];
+              _todo[i] = _todo[maxValue];
+              _todo[maxValue] = temp;
+            }
+          }
+          setState(() {
+            _todo;
+          });
+        }
+        if (dropdownValueSort == 'increase') {
+          int n = _todo.length;
+          for (int i = 0; i < n - 1; i++) {
+            int minValue = i;
+            for (int j = i + 1; j < n; j++) {
+              if (_todo[j].price < _todo[minValue].price) {
+                minValue = j;
+              }
+            }
+            if (minValue != i) {
+              VirtualmachineModel temp = _todo[i];
+              _todo[i] = _todo[minValue];
+              _todo[minValue] = temp;
+            }
+          }
+          setState(() {
+            _todo;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _filterDoto() async {
+    final res = await http.post(
+      Uri.parse(urlfilter),
+      headers: _headers,
+      body: json.encode({'status': dropdownValue}),
+    );
+
+    final List<dynamic> todoListAsync = json.decode(res.body);
+    setState(() {
+      _todo.clear();
+      _todo.addAll(
+          todoListAsync.map((e) => VirtualmachineModel.fromMap(e)).toList());
+    });
   }
 
 //Hàm lọc những máy không có người thuê
@@ -325,14 +402,14 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 DropdownButton<String>(
                   value: dropdownValue,
-                  hint: const Text('Sort by Status'),
+                  hint: const Text('Filter by Status'),
                   icon: const Icon(Icons.arrow_drop_down),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (String? newValue) {
                     setState(() {
                       dropdownValue = newValue!;
                     });
-                    _filterData();
+                    isCheckingConnection ? _filterDoto() : _filterData();
                   },
                   items: const [
                     DropdownMenuItem<String>(
@@ -357,9 +434,9 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                   style: const TextStyle(color: Colors.black),
                   onChanged: (String? newValue) {
                     setState(() {
-                      dropdownValueSort= newValue!;
+                      dropdownValueSort = newValue!;
                     });
-                    _sortData();
+                    isCheckingConnection ? _sortTodo() : _sortData();
                   },
                   items: const [
                     DropdownMenuItem<String>(

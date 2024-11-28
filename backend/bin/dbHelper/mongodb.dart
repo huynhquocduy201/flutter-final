@@ -20,6 +20,21 @@ class Mongodb {
     return arrData;
   }
 
+  static Future<List<Map<String, dynamic>>> getDataFilter(dynamic data) async {
+    var arrData = await userCollection.find().toList();
+    if (data["status"] == "No users") {
+      arrData = await userCollection.find({'status': 'No users'}).toList();
+    }
+    if (data["status"] == "There are users") {
+      arrData =
+          await userCollection.find({'status': 'There are users'}).toList();
+    }
+    if (data['status'] == 'All') {
+      arrData = await userCollection.find().toList();
+    }
+    return arrData;
+  }
+
   static Future<String> insert(VirtualmachineModel data) async {
     try {
       var db = await userCollection.insertOne(data.toJson());

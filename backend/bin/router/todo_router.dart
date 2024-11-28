@@ -18,6 +18,7 @@ class TodoRouter {
     router.delete('/todos', deleteVirtualMachines);
     router.post('/todos/async', asyncData);
     router.post('/todos/finddata', findData);
+    router.post('/todos/filterdata', filterData);
     return router;
   }
 
@@ -93,12 +94,30 @@ class TodoRouter {
   Future<Response> findData(Request req) async {
     try {
       final payload = await req.readAsString();
-       final data = json.decode(payload) as List<dynamic>;
-      Map<String, dynamic>   map = data.map((item) {
+      final data = json.decode(payload) as List<dynamic>;
+      Map<String, dynamic> map = data.map((item) {
         return item as Map<String, dynamic>;
       }).first;
       final data1 = VirtualmachineModel.fromMap(map);
       final body = json.encode(await Mongodb.finddata(data1));
+      return Response.ok(
+        body,
+        headers: _headers,
+      );
+    } catch (e) {
+      return Response.internalServerError(
+        body: json.encode({'lỗi': e.toString()}),
+        headers: _headers,
+      );
+    }
+  }
+
+  Future<Response> filterData(Request req) async {
+    try {
+      final payload = await req.readAsString();
+      final data = json.decode(payload);
+     
+      final body = json.encode(await Mongodb.getDataFilter(data));
       return Response.ok(
         body,
         headers: _headers,
