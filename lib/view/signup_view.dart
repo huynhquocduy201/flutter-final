@@ -17,6 +17,8 @@ class _SignupViewState extends State<SignupView> {
   final eventService = UserService();
   String? erorrUserName;
   String? erorrPassword;
+  bool showPass = true;
+  bool showRePass = true;
   List<UserModel> items = [];
   @override
   void initState() {
@@ -49,18 +51,38 @@ class _SignupViewState extends State<SignupView> {
         erorrPassword = 'Password does not match1!';
         erorrUserName = 'Username already exists!';
       });
+    } else if (usernameController.text == '' ||
+        passwordController.text == '' ||
+        repasswordController.text == '') {
+      setState(() {
+        erorrPassword = erorrUserName = 'Please fill in all information!';
+      });
     } else {
       await eventService.saveEvent(event);
       if (!mounted) return;
       Navigator.of(context).pop(true);
     }
   }
- void _resetEroor() {
+
+  void _resetEroor() {
     setState(() {
-       erorrPassword = null;
-        erorrUserName = null;
+      erorrPassword = null;
+      erorrUserName = null;
     });
   }
+
+  void _showPassword() {
+    setState(() {
+      showPass = !showPass;
+    });
+  }
+
+  void _showRePassword() {
+    setState(() {
+      showRePass = !showRePass;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,25 +102,43 @@ class _SignupViewState extends State<SignupView> {
                 controller: usernameController,
                 decoration: InputDecoration(
                     label: const Text('User name'), errorText: erorrUserName),
-                     onChanged: (text) {
+                onChanged: (text) {
                   _resetEroor();
                 },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
+                obscureText: showPass,
                 decoration: InputDecoration(
-                    label: const Text('Password'), errorText: erorrPassword),
-                     onChanged: (text) {
+                    label: const Text('Password'),
+                    errorText: erorrPassword,
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          _showPassword();
+                        },
+                        icon: Icon(showPass
+                            ? Icons.visibility_off
+                            : Icons.visibility))),
+                onChanged: (text) {
                   _resetEroor();
                 },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: repasswordController,
+                obscureText: showRePass,
                 decoration: InputDecoration(
-                    label: const Text('Re-password'), errorText: erorrPassword),
-                     onChanged: (text) {
+                    label: const Text('Re-password'),
+                    errorText: erorrPassword,
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          _showRePassword();
+                        },
+                        icon: Icon(showRePass
+                            ? Icons.visibility_off
+                            : Icons.visibility))),
+                onChanged: (text) {
                   _resetEroor();
                 },
               ),

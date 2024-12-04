@@ -18,6 +18,7 @@ class _LogginViewState extends State<LogginView> {
   final eventService = UserService();
   String? erorr;
   String test = '';
+  bool show = true;
   List<UserModel> items = [];
   @override
   void initState() {
@@ -50,6 +51,10 @@ class _LogginViewState extends State<LogginView> {
           });
         }
       });
+    }else if(usernameController.text==''||passwordController.text==''){
+       setState(() {
+        erorr = 'Please fill in all information!';
+      });
     } else {
       setState(() {
         erorr = 'password or username is incorrect!';
@@ -60,6 +65,12 @@ class _LogginViewState extends State<LogginView> {
   void _resetEroor() {
     setState(() {
       erorr = null;
+    });
+  }
+
+  void showPassword() {
+    setState(() {
+      show =  !show;
     });
   }
 
@@ -89,8 +100,16 @@ class _LogginViewState extends State<LogginView> {
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
+                obscureText: show,
                 decoration: InputDecoration(
-                    label: const Text('Password'), errorText: erorr),
+                    label: const Text('Password'),
+                    errorText: erorr,
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          showPassword();
+                        },
+                        icon: Icon(
+                            show ? Icons.visibility_off : Icons.visibility))),
                 onChanged: (text) {
                   _resetEroor();
                 },
