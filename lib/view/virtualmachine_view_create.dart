@@ -42,6 +42,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   final priceControoler = TextEditingController();
   final descriptionControoler = TextEditingController();
   final eventService = VirtualmachineService();
+  String? erorr;
   final event = VirtualmachineModel(
       id: '',
       name: '',
@@ -68,24 +69,39 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   }
 
   Future<void> _addEvent() async {
+    double? price = double.tryParse(priceControoler.text);
+    if (price != null) {
+      event.price = price;
+    } else {
+      event.price = 0.0;
+    }
     event.id = '';
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
-    event.price = double.parse(priceControoler.text);
     event.ram = ramController.text;
     event.description = descriptionControoler.text;
     event.name = nameController.text;
     event.status = dropdownValue;
-    await eventService.saveEvent(event);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Center(child: Text('Bạn đã thêm thành công'))));
-    nameController.clear();
-    ramController.clear();
-    gpuController.clear();
-    cpuControoler.clear();
-    priceControoler.clear();
-    descriptionControoler.clear();
+    if (cpuControoler.text == '' ||
+        gpuController.text == '' ||
+        ramController.text == '' ||
+        nameController.text == '' ||
+        descriptionControoler.text == '') {
+      setState(() {
+        erorr = 'Please fill in all information!';
+      });
+    } else {
+      await eventService.saveEvent(event);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text('Bạn đã thêm thành công'))));
+      nameController.clear();
+      ramController.clear();
+      gpuController.clear();
+      cpuControoler.clear();
+      priceControoler.clear();
+      descriptionControoler.clear();
+    }
   }
 
   Future<void> _asyncData() async {
@@ -113,9 +129,14 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   }
 
   Future<void> _addTodos() async {
+    double? price = double.tryParse(priceControoler.text);
+    if (price != null) {
+      event.price = price;
+    } else {
+      event.price = 0.0;
+    }
     event.cpu = cpuControoler.text;
     event.gpu = gpuController.text;
-    event.price = double.parse(priceControoler.text);
     event.ram = ramController.text;
     event.description = descriptionControoler.text;
     event.name = nameController.text;
@@ -133,22 +154,31 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         isConnect = false;
       }
     }
-
-    final res = await http.post(
-      Uri.parse(url),
-      headers: _headers,
-      body: json.encode(event.toMap()),
-    );
-    if (res.statusCode == 200) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Center(child: Text('Bạn đã thêm thành công'))));
-      nameController.clear();
-      ramController.clear();
-      gpuController.clear();
-      cpuControoler.clear();
-      priceControoler.clear();
-      descriptionControoler.clear();
+    if (cpuControoler.text == '' ||
+        gpuController.text == '' ||
+        ramController.text == '' ||
+        nameController.text == '' ||
+        descriptionControoler.text == '') {
+      setState(() {
+        erorr = 'Please fill in all information!';
+      });
+    } else {
+      final res = await http.post(
+        Uri.parse(url),
+        headers: _headers,
+        body: json.encode(event.toMap()),
+      );
+      if (res.statusCode == 200) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Center(child: Text('Bạn đã thêm thành công'))));
+        nameController.clear();
+        ramController.clear();
+        gpuController.clear();
+        cpuControoler.clear();
+        priceControoler.clear();
+        descriptionControoler.clear();
+      }
     }
   }
 
@@ -189,6 +219,12 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
     }
   }
 
+  void _resetEroor() {
+    setState(() {
+      erorr = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,41 +257,63 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
             const Text('Name Vitual Machine'),
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-              ),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(), errorText: erorr),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             const SizedBox(height: 10),
             const Text('Ram'),
             TextField(
               controller: ramController,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(), errorText: erorr),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             const SizedBox(height: 10),
             const Text('Gpu'),
             TextField(
               controller: gpuController,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(), errorText: erorr),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             const SizedBox(height: 10),
             const Text('Cpu'),
             TextField(
               controller: cpuControoler,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(), errorText: erorr),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             const SizedBox(height: 10),
             const Text('Price'),
             TextField(
               controller: priceControoler,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(), errorText: erorr),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             const Text('description'),
             TextField(
               controller: descriptionControoler,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  errorText: erorr,
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 25.0, horizontal: 10.0)),
+              onChanged: (text) {
+                _resetEroor();
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -272,6 +330,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
                     setState(() {
                       dropdownValue = newValue!;
                     });
+                    _resetEroor();
                   },
                   items: const [
                     DropdownMenuItem<String>(

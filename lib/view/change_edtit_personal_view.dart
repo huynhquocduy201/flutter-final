@@ -13,19 +13,43 @@ class ChangeEdtitPersonalView extends StatefulWidget {
 
 class _ChangeEdtitPersonalViewState extends State<ChangeEdtitPersonalView> {
   final usernameController = TextEditingController();
-
+  String? erorr;
   final eventService = UserService();
   @override
   void initState() {
     super.initState();
     usernameController.text = widget.event.username;
   }
-
+void _resetEroor(){
+  setState(() {
+    erorr=null;
+  });
+}
   Future<void> editusername() async {
-    widget.event.username = usernameController.text;
+    List<UserModel> items = [];
+    items = await eventService.getAllUser();
+    if (items.any((e) => e.username == usernameController.text)) {
+      setState(() {
+        erorr = 'username already exists';
+      });
+      
+    } else if (usernameController.text=='') {
+      setState(() {
+        erorr = 'Please fill in all information!';
+      });
+      
+    }
+    else if(widget.event.username == usernameController.text){
+ setState(() {
+        erorr = 'Please choose a newer username';
+      });
+    }else{
+  widget.event.username = usernameController.text;
     await eventService.saveEvent(widget.event);
     if (!mounted) return;
     Navigator.of(context).pop(true);
+    }
+  
   }
 
   @override
@@ -65,17 +89,19 @@ class _ChangeEdtitPersonalViewState extends State<ChangeEdtitPersonalView> {
             padding: const EdgeInsets.all(0.8),
             child: Column(children: [
               Container(
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                     border: Border(
-                        top: BorderSide(width: 1, color: Colors.grey),
-                        bottom: BorderSide(width: 1, color: Colors.grey)),
+                        top: const BorderSide(width: 1, color: Colors.grey),
+                   bottom: erorr==null ?const BorderSide(width: 0): const BorderSide(width: 1, color: Colors.grey) ),
                   ),
                   child: TextField(
                     controller: usernameController,
-                    decoration: const InputDecoration(
-                      label: Text('Enter Username'),
+                    decoration:  InputDecoration(
+                      label:const Text('Enter Username'),
                       enabledBorder: InputBorder.none,
+                      errorText:erorr
                     ),
+                    onChanged: (text){_resetEroor();} ,
                   ))
             ])));
   }

@@ -55,7 +55,12 @@ class _SignupViewState extends State<SignupView> {
       Navigator.of(context).pop(true);
     }
   }
-
+ void _resetEroor() {
+    setState(() {
+       erorrPassword = null;
+        erorrUserName = null;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,18 +80,27 @@ class _SignupViewState extends State<SignupView> {
                 controller: usernameController,
                 decoration: InputDecoration(
                     label: const Text('User name'), errorText: erorrUserName),
+                     onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
                     label: const Text('Password'), errorText: erorrPassword),
+                     onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: repasswordController,
                 decoration: InputDecoration(
                     label: const Text('Re-password'), errorText: erorrPassword),
+                     onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 10),
               const SizedBox(height: 20),

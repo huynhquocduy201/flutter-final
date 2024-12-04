@@ -57,6 +57,12 @@ class _LogginViewState extends State<LogginView> {
     }
   }
 
+  void _resetEroor() {
+    setState(() {
+      erorr = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,12 +82,18 @@ class _LogginViewState extends State<LogginView> {
                 controller: usernameController,
                 decoration: InputDecoration(
                     label: const Text('User name'), errorText: erorr),
+                onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
                     label: const Text('Password'), errorText: erorr),
+                onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 10),
               Row(
@@ -95,6 +107,7 @@ class _LogginViewState extends State<LogginView> {
                               builder: (context) => const SignupView()))
                           .then((value) async {
                         if (value == true) {
+                          _resetEroor();
                           setState(() {
                             loadEvents();
                           });

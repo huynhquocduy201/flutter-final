@@ -18,16 +18,27 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   String? erorr;
   Future<void> chagepassword() async {
     widget.event.password = passwordController.text;
-
-    if (passwordController.text == repasswordController.text) {
-      await eventService.saveEvent(widget.event);
-      if (!mounted) return;
-      Navigator.of(context).pop(true);
-    } else {
+    if (passwordController.text == '' || repasswordController.text == '') {
       setState(() {
-        erorr = 'Passwords do not match';
+        erorr = 'Please fill in all information!';
       });
+    } else {
+      if (passwordController.text == repasswordController.text) {
+        await eventService.saveEvent(widget.event);
+        if (!mounted) return;
+        Navigator.of(context).pop(true);
+      } else {
+        setState(() {
+          erorr = 'Passwords do not match';
+        });
+      }
     }
+  }
+
+  void _resetEroor() {
+    setState(() {
+      erorr = null;
+    });
   }
 
   @override
@@ -49,12 +60,18 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                 controller: repasswordController,
                 decoration: InputDecoration(
                     label: const Text('Enter Password'), errorText: erorr),
+                onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
                     label: const Text('Enter Re-password'), errorText: erorr),
+                    onChanged: (text) {
+                  _resetEroor();
+                },
               ),
               const SizedBox(height: 10),
               const SizedBox(height: 20),

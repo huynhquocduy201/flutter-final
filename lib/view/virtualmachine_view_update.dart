@@ -32,6 +32,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
   bool isCheckingConnection = false;
   bool isStart = true;
   bool isConnect = false;
+  String? erorr;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final _headers = {'Content-Type': 'application/json'};
   final url = '${getBackendUrl()}/api/v1/todos';
@@ -42,6 +43,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
   final priceControoler = TextEditingController();
   final descriptionControoler = TextEditingController();
   final eventService = VirtualmachineService();
+
   String dropdownValue = 'No users';
   final urlasync = '${getBackendUrl()}/api/v1/todos/async';
   @override
@@ -97,16 +99,26 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     widget.event.price = double.parse(priceControoler.text);
     widget.event.description = descriptionControoler.text;
     widget.event.status = dropdownValue;
-    final updatedata = VirtualmachineModel(
-        id: widget.event.id,
-        name: widget.event.name,
-        gpu: widget.event.gpu,
-        cpu: widget.event.cpu,
-        ram: widget.event.ram,
-        price:widget.event.price,
-        description: widget.event.description,
-        status: widget.event.status);
-    await eventService.saveEvent(updatedata);
+    if (cpuControoler.text == '' ||
+        gpuController.text == '' ||
+        ramController.text == '' ||
+        nameController.text == '' ||
+        descriptionControoler.text == '') {
+      setState(() {
+        erorr = 'Please fill in all information!';
+      });
+    } else {
+      final updatedata = VirtualmachineModel(
+          id: widget.event.id,
+          name: widget.event.name,
+          gpu: widget.event.gpu,
+          cpu: widget.event.cpu,
+          ram: widget.event.ram,
+          price: widget.event.price,
+          description: widget.event.description,
+          status: widget.event.status);
+      await eventService.saveEvent(updatedata);
+    }
   }
 
   Future<void> _updateTodos() async {
@@ -129,16 +141,26 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
         );
       }
     }
-    final res = await http.put(
-      Uri.parse(url),
-      headers: _headers,
-      body: json.encode(widget.event.toMap()),
-    );
-    if (res.statusCode == 200) {
-      if (isConnect) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Center(child: Text('Bạn đã cập nhật thành công'))));
+    if (cpuControoler.text == '' ||
+        gpuController.text == '' ||
+        ramController.text == '' ||
+        nameController.text == '' ||
+        descriptionControoler.text == '') {
+      setState(() {
+        erorr = 'Please fill in all information!';
+      });
+    } else {
+      final res = await http.put(
+        Uri.parse(url),
+        headers: _headers,
+        body: json.encode(widget.event.toMap()),
+      );
+      if (res.statusCode == 200) {
+        if (isConnect) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('Bạn đã cập nhật thành công'))));
+        }
       }
     }
   }
@@ -180,6 +202,12 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
     }
   }
 
+  void _resetEroor() {
+    setState(() {
+      erorr = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,46 +241,65 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                 const Text('Name Vitual Machine'),
                 TextField(
                   controller: nameController,
-                  decoration:
-                      const InputDecoration(border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(), errorText: erorr),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Text('Ram'),
                 TextField(
                   controller: ramController,
-                  decoration:
-                      const InputDecoration(border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(), errorText: erorr),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Text('Gpu'),
                 TextField(
                   controller: gpuController,
-                  decoration:
-                      const InputDecoration(border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(), errorText: erorr),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Text('Cpu'),
                 TextField(
                   controller: cpuControoler,
-                  decoration:
-                      const InputDecoration(border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(), errorText: erorr),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Text('Price'),
                 TextField(
                   controller: priceControoler,
-                  decoration:
-                      const InputDecoration(border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(), errorText: erorr),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 const Text('description'),
                 TextField(
                   keyboardType: TextInputType.multiline,
                   controller: descriptionControoler,
                   maxLines: null,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      errorText: erorr,
+                      contentPadding: const EdgeInsets.symmetric(
                           vertical: 25.0, horizontal: 10.0)),
+                  onChanged: (text) {
+                    _resetEroor();
+                  },
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,6 +316,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                         setState(() {
                           dropdownValue = newValue!;
                         });
+                        _resetEroor();
                       },
                       items: const [
                         DropdownMenuItem<String>(
