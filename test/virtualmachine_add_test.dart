@@ -5,17 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('EventUpdate tạo sự kiện', (WidgetTester tester) async {
     // Tạo một sự kiện mới
-  
 
     // Xây dựng ứng dụng
     await tester.pumpWidget(
-     const MaterialApp(
-        home:VirtualmachineViewCreate(),
+      const MaterialApp(
+        home: VirtualmachineViewCreate(),
       ),
     );
     await tester.enterText(find.byType(TextField).first, 'Máy 2');
-
- 
-    
   });
 }

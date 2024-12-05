@@ -43,6 +43,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   final descriptionControoler = TextEditingController();
   final eventService = VirtualmachineService();
   String? erorr;
+  String? messageErorr;
   final event = VirtualmachineModel(
       id: '',
       name: '',
@@ -69,7 +70,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
   }
 
   Future<void> _addEvent() async {
-    double? price = double.tryParse(priceControoler.text);
+    try{ double? price = double.tryParse(priceControoler.text);
     if (price != null) {
       event.price = price;
     } else {
@@ -94,25 +95,30 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
       await eventService.saveEvent(event);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Center(child: Text('Bạn đã thêm thành công'))));
+          content: Center(child: Text('You have added successfully'))));
       nameController.clear();
       ramController.clear();
       gpuController.clear();
       cpuControoler.clear();
       priceControoler.clear();
       descriptionControoler.clear();
+    }}catch(e){
+        setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
     }
+   
   }
 
   Future<void> _asyncData() async {
-    List<VirtualmachineModel> items = [];
+    try{  List<VirtualmachineModel> items = [];
     final events = await eventService.getAllEvents();
     items = events;
     if (items.isNotEmpty) {
       if (isConnect) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Center(child: Text('Hệ thống bắt đầu đồng bộ '))));
+            content: Center(child: Text('The system is synchronizing...'))));
       }
 
       await http.post(
@@ -123,13 +129,19 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
       if (isConnect) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Center(child: Text('Đã đồng bộ xong'))));
+            const SnackBar(content: Center(child: Text('Synchronization completed'))));
       }
+    }}catch(e){
+if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar( SnackBar(content:Center(child:Text('Sync error:${e.toString()}')) ));
     }
+  
   }
 
   Future<void> _addTodos() async {
-    double? price = double.tryParse(priceControoler.text);
+    try{
+       double? price = double.tryParse(priceControoler.text);
     if (price != null) {
       event.price = price;
     } else {
@@ -171,7 +183,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
       if (res.statusCode == 200) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Center(child: Text('Bạn đã thêm thành công'))));
+            content: Center(child: Text('You have added successfully'))));
         nameController.clear();
         ramController.clear();
         gpuController.clear();
@@ -180,17 +192,25 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         descriptionControoler.clear();
       }
     }
+    }catch(e){
+               setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
+    }
+   
   }
 
   Future<void> _initConnection() async {
-    List<ConnectivityResult> result =
+      try{List<ConnectivityResult> result =
         await (Connectivity().checkConnectivity());
-    return _updateConnectionStatus(result);
+    return _updateConnectionStatus(result);} catch(e){
+      messageErorr='Connection error :$e';
+    }
   }
 
   Future<void> _updateConnectionStatus(
       List<ConnectivityResult> connectivityResult) async {
-    try {
+    
       if (connectivityResult.contains(ConnectivityResult.none)) {
         setState(() {
           isCheckingConnection = false;
@@ -198,7 +218,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         if (!isStart) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đang ngoại tuyến'))));
+              content: Center(child: Text('You are offline'))));
         }
         isStart = false;
         isConnect = true;
@@ -206,7 +226,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đã kết nối internet'))));
+              content: Center(child: Text('You are online'))));
         }
 
         _asyncData();
@@ -214,9 +234,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
           isCheckingConnection = true;
         });
       }
-    } catch (e) {
-      print('Error:$e');
-    }
+    
   }
 
   void _resetEroor() {
@@ -249,7 +267,8 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
         ),
         title: const Center(child: Text('Add Item Virtual Machine')),
       ),
-      body: SingleChildScrollView(
+      body: messageErorr!=null?Row(mainAxisAlignment:MainAxisAlignment.center , 
+        children: [Text('$messageErorr')],): SingleChildScrollView(
         padding: const EdgeInsets.all(0.8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

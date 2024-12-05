@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
+
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -31,6 +31,8 @@ class VirtualmachineViewDetail extends StatefulWidget {
 }
 
 class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
+ String? messageErorr;
+ 
   final eventService = VirtualmachineService();
   bool isCheckingConnection = false;
   bool isStart = true;
@@ -55,19 +57,31 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
   }
 
   Future<void> _saveEvent() async {
-    if (!mounted) return;
-    Navigator.of(context).pop(true);
+    
+    List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+    
+     
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        loadEvents();
+      } else {
+        loadEventsTodo();
+      }
+    
   }
 
   Future<void> _initConnection() async {
-    List<ConnectivityResult> result =
+    try{List<ConnectivityResult> result =
         await (Connectivity().checkConnectivity());
-    return _updateConnectionStatus(result);
+    return _updateConnectionStatus(result);} catch(e){
+      messageErorr='Connection error :$e';
+    }
+    
   }
 
   Future<void> _updateConnectionStatus(
       List<ConnectivityResult> connectivityResult) async {
-    try {
+   
       if (connectivityResult.contains(ConnectivityResult.none)) {
         loadEvents();
         setState(() {
@@ -76,7 +90,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
         if (!isStart) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đang ngoại tuyến'))));
+              content: Center(child: Text('You are offline'))));
         }
         isStart = false;
         isConnect = true;
@@ -84,26 +98,32 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đã kết nối internet'))));
+              content: Center(child: Text('You are online'))));
         }
 
         loadEventsTodo();
-
+        loadEvents();
         setState(() {
           isCheckingConnection = true;
         });
       }
-    } catch (e) {
-      print('Error:$e');
-    }
+    
   }
 
   Future<void> delteteEvents() async {
-    await eventService.deleteEvent(widget.event);
+    try{
+      await eventService.deleteEvent(widget.event);
+    }catch(e){
+        setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
+    }
+    
   }
 
   Future<void> _deleteTodos() async {
-    final res = await http.delete(
+    try{
+          final res = await http.delete(
       Uri.parse(url),
       headers: _headers,
       body: json.encode(widget.event.toMap()),
@@ -114,19 +134,34 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Center(child: Text('Bạn đã xoá thành công '))));
     }
+    }catch(e){
+       setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
+    }
+
   }
 
   Future<void> loadEvents() async {
-    final events = await eventService.getAllEvents();
+    try {
+        final events = await eventService.getAllEvents();
 
     final eventofid = events.firstWhere((e) => e.id == widget.event.id);
-    setState(() {
+  
+     setState(() {
       widget.event == eventofid;
     });
+    }catch(e){
+       setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
+    }
+  
   }
 
   Future<void> _asyncData() async {
-    List<VirtualmachineModel> items = [];
+    try{
+        List<VirtualmachineModel> items = [];
     final events = await eventService.getAllEvents();
     items = events;
 
@@ -134,7 +169,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
       if (isConnect) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Center(child: Text('Hệ thống bắt đầu đồng bộ '))));
+            content: Center(child: Text('The system is synchronizing...'))));
       }
 
       await http.post(
@@ -145,15 +180,22 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
       if (isConnect) {
    if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content:Center(child:Text('Đã đồng bộ xong')) ));
+          .showSnackBar(const SnackBar(content:Center(child:Text('Synchronization completed')) ));
  
       }
    
     }
+    } catch(e){ 
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar( SnackBar(content:Center(child:Text('Sync error:${e.toString()}')) ));
+      
+      }
+  
   }
 
   Future<void> loadEventsTodo() async {
-    _asyncData();
+    try{  _asyncData();
     final res = await http.post(
       Uri.parse(url),
       headers: _headers,
@@ -166,7 +208,12 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
       setState(() {
         widget.event == VirtualmachineModel.fromMap(mapData);
       });
+    }}catch(e){
+    setState(() {
+        messageErorr='Error:${e.toString()}';
+      });
     }
+   
   }
 
   @override
@@ -194,7 +241,8 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
         title: Center(child: Text(widget.event.name)),
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child: messageErorr!=null?Row(mainAxisAlignment:MainAxisAlignment.center , 
+        children: [Text('$messageErorr')],): Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -250,7 +298,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
                                               Text('Bạn đã xoá thành công '))));
                               Navigator.of(context).pop(true);
                             },
-                      label: const Text('Xoá sự kiện'),
+                      label: const Text('Delete'),
                     )
                   ],
                 )),
@@ -270,7 +318,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
                           }
                         });
                       },
-                      label: const Text('Lưu sự kiện'),
+                      label: const Text('Update'),
                     )
                   ],
                 )),
