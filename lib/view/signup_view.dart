@@ -86,7 +86,7 @@ class _SignupViewState extends State<SignupView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
+        body: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 200, left: 20, right: 20),
             child: Column(children: [
               Container(

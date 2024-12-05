@@ -231,7 +231,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Hệ thống bắt đầu đồng bộ '))));
+              content: Center(child: Text('The system is synchronizing... '))));
         }
 
         final resasync = await http.post(
@@ -242,7 +242,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Center(child: Text('Đã đồng bộ xong'))));
+              const SnackBar(content: Center(child: Text('Synchronization completed'))));
         }
 
         final List<dynamic> todoListAsync = json.decode(resasync.body);
@@ -266,7 +266,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     if (res.statusCode == 200) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Center(child: Text('Bạn đã xoá thành công '))));
+          content: Center(child: Text('You have successfully deleted'))));
       final res = await http.get(Uri.parse(url));
       if (res.statusCode == 200) {
         final List<dynamic> todoList = json.decode(res.body);
@@ -303,7 +303,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         if (!isStart) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đang ngoại tuyến'))));
+              content: Center(child: Text('You are offline'))));
         }
         isStart = false;
         isConnect = true;
@@ -311,7 +311,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('Bạn đã kết nối internet'))));
+              content: Center(child: Text('You are online'))));
         }
 
         loadEvents();
@@ -478,11 +478,11 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                     Text(item.name),
                                     Row(
                                       children: [
-                                        Text(item.gpu),
+                                        Text('GPU:${item.gpu}'),
                                         const SizedBox(width: 10),
-                                        Text(item.cpu),
+                                        Text('CPU:${item.cpu}'),
                                         const SizedBox(width: 10),
-                                        Text(item.ram),
+                                        Text('RAM:${item.ram}'),
                                       ],
                                     ),
                                     Row(
@@ -495,7 +495,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                           children: [
                                             Text('Status:${item.status}'),
                                             const SizedBox(height: 15),
-                                            Text('Price:${item.price}'),
+                                            Text('Price:${item.price}/h'),
                                           ],
                                         ),
                                         Column(
@@ -561,11 +561,11 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                           Text(item.name),
                                           Row(
                                             children: [
-                                              Text(item.gpu),
-                                              const SizedBox(width: 10),
-                                              Text(item.cpu),
-                                              const SizedBox(width: 10),
-                                              Text(item.ram),
+                                               Text('GPU:${item.gpu}'),
+                                        const SizedBox(width: 10),
+                                        Text('CPU:${item.cpu}'),
+                                        const SizedBox(width: 10),
+                                        Text('RAM:${item.ram}'),
                                             ],
                                           ),
                                           Row(
@@ -578,7 +578,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                                 children: [
                                                   Text('Status:${item.status}'),
                                                   const SizedBox(height: 15),
-                                                  Text('Price:${item.price}'),
+                                                  Text('Price:${item.price}/h'),
                                                 ],
                                               ),
                                               Column(

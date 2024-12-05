@@ -132,7 +132,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
     if (res.statusCode == 200) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Center(child: Text('Bạn đã xoá thành công '))));
+          content: Center(child: Text('you have successfully deleted '))));
     }
     }catch(e){
        setState(() {
@@ -244,36 +244,41 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
         child: messageErorr!=null?Row(mainAxisAlignment:MainAxisAlignment.center , 
         children: [Text('$messageErorr')],): Column(
           children: [
-            Row(
+   Card(child:Column(children: [         Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(widget.event.gpu),
+                Text('GPU:${widget.event.gpu}'),
                 const SizedBox(width: 10),
-                Text(widget.event.cpu),
+                Text('CPU:${widget.event.cpu}'),
                 const SizedBox(width: 10),
-                Text(widget.event.ram),
+                Text('RAM:${widget.event.ram}'),
               ],
             ),
             const SizedBox(height: 15),
+            const Row( mainAxisAlignment :MainAxisAlignment.start,children: [  Text('Description:'),],),
             Row(
-              children: [Text(widget.event.description)],
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [Column( children: [
+              
+                 const SizedBox(height: 10),
+                Text(widget.event.description)],)],
             ),
             const SizedBox(height: 15),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Price:${widget.event.price} '),
+              Text('Price:${widget.event.price}/h '),
               Text('Status:${widget.event.status}'),
             ]),
             const SizedBox(height: 15),
-            Row(
+               Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                    child: Text(widget.event.status == 'No users'
-                        ? ''
-                        : 'The device is currently occupied, please choose another device'))
+              Text(widget.event.status == 'No users'
+                        ? 'The device has no users'
+                        : 'The device is currently occupied, please choose another device')
               ],
-            ),
+            )
+              ,],) ,),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -295,7 +300,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
                                   const SnackBar(
                                       content: Center(
                                           child:
-                                              Text('Bạn đã xoá thành công '))));
+                                              Text('You have successfully deleted '))));
                               Navigator.of(context).pop(true);
                             },
                       label: const Text('Delete'),

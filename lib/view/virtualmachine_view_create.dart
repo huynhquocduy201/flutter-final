@@ -93,9 +93,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
       });
     } else {
       await eventService.saveEvent(event);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Center(child: Text('You have added successfully'))));
+   
       nameController.clear();
       ramController.clear();
       gpuController.clear();
@@ -370,6 +368,9 @@ if (!mounted) return;
                         }
                       : () {
                           _addEvent();
+                          
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text('You have added successfully'))));
                         },
                   label: const Text('Create'),
                 )

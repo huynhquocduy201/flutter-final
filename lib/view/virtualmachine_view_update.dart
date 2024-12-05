@@ -128,9 +128,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
           status: widget.event.status);
           try{
             await eventService.saveEvent(updatedata);
-               if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('You have successfully updated'))));
+           
           }catch(e){
              setState(() {
         messageErorr='Error:${e.toString()}';
@@ -363,11 +361,9 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
                             }
                           : () {
                               _saveEvent();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Center(
-                                          child: Text(
-                                              'Bạn đã cập nhật thành công'))));
+                                  if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Center(child: Text('You have successfully updated'))));
                               Navigator.of(context).pop(true);
                             },
                       label: const Text('Update sự kiện'),
