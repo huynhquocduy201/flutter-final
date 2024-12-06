@@ -147,8 +147,8 @@ class _UserDetailState extends State<UserDetail> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const LogginView()));
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                          builder: (context) => const LogginView()) ,(Route<dynamic> route) => false);
                     },
                     child: const Text('Signout'),
                   )

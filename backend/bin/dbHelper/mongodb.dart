@@ -50,8 +50,23 @@ class Mongodb {
   }
 
   static Future<void> asyncData(List<Map<String, dynamic>> data) async {
-    await userCollection.remove({});
-    await userCollection.insertAll(data);
+
+    await userCollection.deleteMany({});
+    
+    insertall(data);
+  
+    
+   
+  }
+static Future<void> insertall(List<Map<String, dynamic>> data) async {
+
+   
+  
+     await userCollection.insertMany(data);
+  
+    
+    
+   
   }
 
   static delete(VirtualmachineModel data) async {

@@ -36,8 +36,9 @@ class VirtualmachineView extends StatefulWidget {
 
 class _VirtualmachineViewState extends State<VirtualmachineView> {
   bool isCheckingConnection = false;
-  bool isStart = true;
+  bool isStart = false;
   bool isConnect = false;
+  bool isasync =true;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final eventService = VirtualmachineService();
   final userService = UserService();
@@ -53,10 +54,11 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   @override
   void initState() {
     super.initState();
-    _initConnection();
+    
 
     _connectivitySubscription =
         Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+        _initConnection();
   }
 
   @override
@@ -220,39 +222,72 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
       });
     }
   }
+Future<void> _asyncData() async {
+    try{
+       final events = await eventService.getAllEvents();
+    setState(() {
+      items = events;
+    });
+        List<VirtualmachineModel> listitems = [];
+    listitems = events;
 
-  Future<void> _fetchTodos() async {
-    final events = await eventService.getAllEvents();
-    items = events;
-    final res = await http.get(Uri.parse(url));
+    if (listitems.isNotEmpty) {
+      if (isConnect) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Center(child: Text('The system is synchronizing...'))));
+      }
 
+    final resasync=  await http.post(
+        Uri.parse(urlasync),
+        headers: _headers,
+        body: json.encode(listitems),
+      );
+      if (resasync.statusCode == 200) {
+      if (isConnect) {
+   if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content:Center(child:Text('Synchronization completed')) ));
+ 
+      }
+      final res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
-      if (items.isNotEmpty) {
-        if (isConnect) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('The system is synchronizing... '))));
-        }
+        final List<dynamic> todoList = json.decode(res.body);
+        setState(() {
+          
+          _todo.clear();
+          _todo.addAll(todoList
+              .map((e) => VirtualmachineModel.fromMap(e))
+              .toList());
+              isasync=false;
+        });
+      
+    }
+      }
 
-        final resasync = await http.post(
-          Uri.parse(urlasync),
-          headers: _headers,
-          body: json.encode(items),
-        );
-        if (isConnect) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Center(child: Text('Synchronization completed'))));
-        }
-
-        final List<dynamic> todoListAsync = json.decode(resasync.body);
+    }
+    } catch(e){ 
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar( SnackBar(content:Center(child:Text('Sync error:${e.toString()}')) ));
+      
+      }
+  
+  }
+  Future<void> _fetchTodos() async {
+   
+   
+  
+    final res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+        final List<dynamic> todoList = json.decode(res.body);
         setState(() {
           _todo.clear();
-          _todo.addAll(todoListAsync
+          _todo.addAll(todoList
               .map((e) => VirtualmachineModel.fromMap(e))
               .toList());
         });
-      }
+      
     }
   }
 
@@ -283,20 +318,23 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
     final events = await eventService.getAllEvents();
     setState(() {
       items = events;
+      
     });
   }
 
   Future<void> _initConnection() async {
     List<ConnectivityResult> result =
         await (Connectivity().checkConnectivity());
+        isStart=true;
     return _updateConnectionStatus(result);
   }
 
   Future<void> _updateConnectionStatus(
       List<ConnectivityResult> connectivityResult) async {
     try {
+      
       if (connectivityResult.contains(ConnectivityResult.none)) {
-        loadEvents();
+       await loadEvents();
         setState(() {
           isCheckingConnection = false;
         });
@@ -308,14 +346,25 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
         isStart = false;
         isConnect = true;
       } else {
+       
         if (isConnect) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Center(child: Text('You are online'))));
         }
-
-        loadEvents();
-        _fetchTodos();
+     if(isStart){
+      setState(() {
+        isStart=false;
+      });
+     }else{
+  _asyncData();
+       
+        
+     }
+     
+      
+     
+        
 
         setState(() {
           isCheckingConnection = true;
@@ -395,7 +444,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
               ],
             )
           ]),
-      body: Padding(
+      body: isasync? const Center(child: CircularProgressIndicator()):Padding(
           padding: const EdgeInsets.all(0.8),
           child: Column(
             children: [
@@ -551,9 +600,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
                                   }
                                 });
                               },
-                              child: _todo.isEmpty
-                                  ? const CircularProgressIndicator()
-                                  : Card(
+                              child: Card(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

@@ -35,8 +35,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
  
   final eventService = VirtualmachineService();
   bool isCheckingConnection = false;
-  bool isStart = true;
-  bool isConnect = false;
+
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final _headers = {'Content-Type': 'application/json'};
   final url = '${getBackendUrl()}/api/v1/todos';
@@ -87,19 +86,9 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
         setState(() {
           isCheckingConnection = false;
         });
-        if (!isStart) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('You are offline'))));
-        }
-        isStart = false;
-        isConnect = true;
+        
       } else {
-        if (isConnect) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Center(child: Text('You are online'))));
-        }
+        
 
         loadEventsTodo();
         loadEvents();
@@ -159,43 +148,10 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
   
   }
 
-  Future<void> _asyncData() async {
-    try{
-        List<VirtualmachineModel> items = [];
-    final events = await eventService.getAllEvents();
-    items = events;
-
-    if (items.isNotEmpty) {
-      if (isConnect) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Center(child: Text('The system is synchronizing...'))));
-      }
-
-      await http.post(
-        Uri.parse(urlasync),
-        headers: _headers,
-        body: json.encode(items),
-      );
-      if (isConnect) {
-   if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content:Center(child:Text('Synchronization completed')) ));
  
-      }
-   
-    }
-    } catch(e){ 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar( SnackBar(content:Center(child:Text('Sync error:${e.toString()}')) ));
-      
-      }
-  
-  }
 
   Future<void> loadEventsTodo() async {
-    try{  _asyncData();
+    try{  
     final res = await http.post(
       Uri.parse(url),
       headers: _headers,
@@ -275,7 +231,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
               children: [
               Text(widget.event.status == 'No users'
                         ? 'The device has no users'
-                        : 'The device is currently occupied, please choose another device')
+                        : 'The device is currently occupied')
               ],
             )
               ,],) ,),
