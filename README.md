@@ -1,24 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Cnoy1g24)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=17112698&assignment_repo_type=AssignmentRepo)
 
-# Bài tập lớn - Phát triển ứng dụng với Flutter
-
-## Thông tin sinh viên
-- **Họ và tên**: _________
-- **MSSV**: _________
-- **Lớp**: _________
-
-## Giới thiệu
-Đây là yêu cầu của bài tập lớn cho một trong hai học phần **Phát triển ứng dụng di động đa nền tảng 1 (mã học phần 7080325) và Phát triển ứng dụng cho thiết bị di động + BTL (mã học phần 7080115)**. Sinh viên sẽ xây dựng một ứng dụng di động hoàn chỉnh sử dụng Flutter và Dart, áp dụng các kiến thức đã học về lập trình giao diện người dùng, quản lý trạng thái, tích hợp API hoặc/và CSDL, kiểm thử tự động và CI/CD với GitHub Actions.
-
-## Mục tiêu
-Bài tập lớn nhằm:
-- Phát triển kỹ năng lập trình giao diện người dùng (UI) với Flutter và ngôn ngữ Dart.
-- Hiểu và áp dụng các cách quản lý trạng thái trong ứng dụng Flutter.
-- Biết tích hợp ứng dụng với backend hoặc dịch vụ backend thông qua API hoặc CSDL.
-- Thực hiện được các thao tác CRUD (Create, Read, Update, Delete) cơ bản với dữ liệu.
-- Biết áp dụng kiểm thử tự động để đảm bảo chất lượng ứng dụng.
-- Biết áp dụng CI/CD với GitHub Actions để tự động hóa quy trình kiểm thử và triển khai.
+# Bài tập lớn về Phát triển ứng dụng di động đa nền tảng về thuê máy ảo  với Flutter
 
 ## Yêu cầu ứng dụng
 ### 1. Chức năng CRUD
@@ -58,48 +41,6 @@ Bài tập lớn nhằm:
 ### 4. Kiểm thử tự động và CI/CD
 - Tạo các bài kiểm thử tự động bao gồm kiểm thử đơn vị (unit test) và kiểm thử giao diện (widget test) để kiểm tra các chức năng cơ bản của ứng dụng.
 - Sử dụng GitHub Actions để tự động chạy các kiểm thử khi có thay đổi mã nguồn.
-
-## Công nghệ và Thư viện sử dụng
-Sinh viên cần liệt kê một số công nghệ và thư viện cần sử dụng trong quá trình phát triển ứng dụng, ví dụ:
-- **Flutter**: Để xây dựng giao diện người dùng.
-- **Dio hoặc http**: Để gọi API và xử lý HTTP request.
-- **localstore**: Để lưu trữ dữ liệu cục bộ, giúp ứng dụng có thể hoạt động offline.
-- **Test Framework (flutter_test)**: Sử dụng để viết các bài kiểm thử tự động.
-- **GitHub Actions**: Để tự động hóa quy trình kiểm thử khi có thay đổi mã nguồn.
-
-## Báo cáo kết quả
-Sinh viên cần tạo tài liệu báo cáo kết quả, hướng dẫn cài đặt ứng dụng trên thiết bị di động hoặc máy ảo để giám khảo có thể kiểm tra ứng dụng một cách dễ dàng. Ví dụ:
-1. Tải mã nguồn từ repository.
-    ```bash
-    git clone <đường dẫn tới repo>
-    ```
-
-2. Cài đặt các dependencies:
-   ```bash
-   flutter pub get
-   ```
-3. Chạy ứng dụng:
-   ```bash
-   flutter run
-   ```
-4. Kiểm tra ứng dụng trên thiết bị hoặc máy ảo.
-5. Đăng nhập hoặc tạo tài khoản mới (nếu cần).
-6. Thực hiện các thao tác CRUD và kiểm tra kết quả.
-7. Thực hiện kiểm thử tự động và xem kết quả:
-    ```bash
-    flutter test
-    ```
-8. Screenshots hoặc video demo về ứng dụng và quá trình kiểm thử tự động.
-
-## Yêu cầu nộp bài
-- **Source code**: Đẩy toàn bộ mã nguồn lên GitHub repository cá nhân và chia sẻ quyền truy cập.
-- **Kiểm thử tự động**: Sinh viên cần viết các bài kiểm thử tự động cho ứng dụng. Các bài kiểm thử cần được tổ chức rõ ràng và dễ hiểu trong thư mục `test` với hậu tố `_test.dart`. Các bài kiểm thử đơn vị (unit test) cần kiểm tra các chức năng cơ bản của ứng dụng và đảm bảo chất lượng mã nguồn. Kiểm thử UI (widget test) cần được viết để kiểm tra giao diện người dùng và các tương tác người dùng cơ bản.
-- **Các video demo**: 
-  - Quá trình kiểm thử tự động bao gồm kiểm thử đơn vị và kiểm thử UI (bắt buộc).
-  - Trình bày các chức năng chính của ứng dụng (bắt buộc).
-  Các video cần biên tập sao cho rõ ràng, dễ hiểu và không quá dài (tối đa 5 phút).
-- **Báo cáo kết quả**: Đây là nội dung báo cáo của bài tập lớn. Sinh viên cần viết báo cáo ngắn mô tả quá trình phát triển, các thư viện đã sử dụng và các kiểm thử đã thực hiện. Có thể viết trực tiếp trên file README.md này ở mục `Báo cáo kết quả`.
-- **GitHub Actions**: Thiết lập GitHub Actions để chạy kiểm thử tự động khi có thay đổi mã nguồn. Tệp cấu hình workflow cần được đặt trong thư mục `.github/workflows`, đặt tên tệp theo định dạng `ci.yml` (có trong mẫu của bài tập lớn). Github Actions cần chạy thành công và không có lỗi nếu mã nguồn không có vấn đề. Trong trường hợp có lỗi, sinh viên cần sửa lỗi và cập nhật mã nguồn để build thành công. Nếu lỗi liên quan đến `Billing & plans`, sinh viên cần thông báo cho giảng viên để được hỗ trợ hoặc bỏ qua yêu cầu này.
 
 ## Tiêu chí đánh giá
 **5/10 điểm - Build thành công (GitHub Actions báo “Success”)**
@@ -142,7 +83,46 @@ Sinh viên cần tạo tài liệu báo cáo kết quả, hướng dẫn cài đ
 - **9/10**: Hoàn thiện kiểm thử CRUD, trạng thái, tích hợp API/CSDL; UI thân thiện.
 - **10/10**: Tối ưu hóa hoàn chỉnh, UI/UX mượt mà, CI/CD đầy đủ và ổn định.
 
-## Tự đánh giá điểm: X/10
-Sinh viên cần tự đánh giá mức độ hoàn thiện của ứng dụng và so sánh với tiêu chí đánh giá để xác định điểm cuối cùng. Điểm tự đánh giá sẽ được sử dụng như một tiêu chí tham khảo cho giảng viên đánh giá cuối cùng.
+## Báo cáo
+### Thông tin sinh viên
+- **Họ và tên**:Nguyễn Văn Nguyên Đán
+- **MSSV**: 2121050299
+- **Lớp**: DCCTCT66_O8A
 
-Chúc các bạn hoàn thành tốt bài tập lớn và khám phá thêm nhiều kiến thức bổ ích qua dự án này!
+### Giới thiệu
+ Sau khi đã được học xong về học phần phát triển ứng dụng đa nền tảng thì em đã ứng dụng để
+ xây dựng một ứng dụng di động hoàn chỉnh sử dụng Flutter và Dart cụ thể là ứng dụng thuê máy ảo , thì em sẽ áp dụng các kiến thức đã học về lập trình giao diện người dùng, quản lý trạng thái, tích hợp API hoặc/và CSDL , kiểm thử tự động và CI/CD với GitHub Actions.
+
+### Mục tiêu
+Thì mục tiêu của bài tập lớn em gồm :
+- Phát triển kỹ năng lập trình giao diện người dùng (UI) với Flutter và ngôn ngữ Dart.
+- Hiểu và áp dụng các cách quản lý trạng thái trong ứng dụng Flutter.
+- Biết tích hợp ứng dụng với backend hoặc dịch vụ backend thông qua API hoặc CSDL.
+- Thực hiện được các thao tác CRUD (Create, Read, Update, Delete) cơ bản với dữ liệu.
+- Biết áp dụng kiểm thử tự động để đảm bảo chất lượng ứng dụng.
+- Biết áp dụng CI/CD với GitHub Actions để tự động hóa quy trình kiểm thử và triển khai.
+### Quá trình phát triển ứng dụng
+Thì quá trình phát triển ứng dụng đa nền tảng về thuê máy chủ ảo gồm 4 bước sau:
+- Bước 1: Em sẽ xác định yêu cầu của bài tập lớn được giao.
+- Bước 2: Sau đó  sẽ đi phân tích những  yêu cầu đó để có thể xác định chức năng cho ứng dụng của mình cũng như xây dựng cơ sở dữ liệu cần thiết cho ứng dụng.
+- Bước 3: Dựa theo những chức năng và cơ sở dữ liệu đã được  phân tích em sẽ thiết kế ứng dụng về giao diện người dùng.
+- Bước 4: Thì cuối cùng em sẽ đi kiểm thử tự động và CI/CD.
+### Công nghệ và Thư viện sử dụng
+Thì các công nghệ và thư viện mà em sử dụng trong quá trình phát triển ứng dụng, ví dụ:
+- **Flutter**: Để xây dựng giao diện người dùng.
+- **http**: Để gọi API và xử lý HTTP request.
+- **localstore**: Để lưu trữ dữ liệu cục bộ, giúp ứng dụng có thể hoạt động offline.
+- **mongo_dart**:Để lưu trữ cơ sở dữ liệu trên mongoDB khi ứng dụng online
+- **connectivity_plus**:Để tự động kiểm tra kết nối internet cho ứng dụng để có thể đồng bộ dữ liệu khi ứng dụng online.
+- **shefl**:Để xử lý yêu cầu http trong ứng dụng.
+- **shelf_router**:Để tạo các router  cho ứng dụng.
+- **Test Framework (flutter_test)**: Sử dụng để viết các bài kiểm thử tự động.
+- **GitHub Actions**: Để tự động hóa quy trình kiểm thử khi có thay đổi mã nguồn.
+### Kiểm thử tự động và CI/CD
+ Thì các kiểm thử trong ứng dụng di động đa nền tảng về thuê máy ảo của em gồm:
++ Kiểm thử các chức năng CRUD và model
++ Kiểm thử xác thực người dùng 
++ Kiểm thử các service cho việc lưu trữ cục bộ 
+### Đánh giá điểm
+  Thi so với tiêu chí đánh giá thì mức độ hoàn thiện cửa ứng dụng thuê máy ảo của em:10/10
+

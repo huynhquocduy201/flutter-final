@@ -318,7 +318,7 @@ Future<void> _asyncData() async {
     final events = await eventService.getAllEvents();
     setState(() {
       items = events;
-      
+      isasync=false;
     });
   }
 
@@ -331,6 +331,9 @@ Future<void> _asyncData() async {
 
   Future<void> _updateConnectionStatus(
       List<ConnectivityResult> connectivityResult) async {
+        setState(() {
+          isasync=true;
+        });
     try {
       
       if (connectivityResult.contains(ConnectivityResult.none)) {
