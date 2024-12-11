@@ -49,7 +49,7 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
       gpu: '',
       cpu: '',
       ram: '',
-      price: 0,
+      price: 0.0,
       description: '',
       status: '');
   String dropdownValue = 'No users';

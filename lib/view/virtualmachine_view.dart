@@ -322,11 +322,20 @@ setState(() {
       final res = await http.get(Uri.parse(url));
       if (res.statusCode == 200) {
         final List<dynamic> todoList = json.decode(res.body);
-        setState(() {
+        if(todoList.isNotEmpty){
+  setState(() {
+
           _todo.clear();
           _todo.addAll(
               todoList.map((e) => VirtualmachineModel.fromMap(e)).toList());
         });
+        }else{
+          setState(() {
+        isasync=false;
+         erorr='No data found';
+      });
+        }
+      
       }
     }
   }
@@ -344,6 +353,7 @@ setState(() {
     });
     }else{
       setState(() {
+        isasync=false;
          erorr='No data found';
       });
      

@@ -23,11 +23,11 @@ void main() {
         home: VirtualmachineViewDetail(event: newEvent),
       ),
     );
-    expect(find.text('RTX 4060'), findsOneWidget);
-    expect(find.text('i9-13900K'), findsOneWidget);
-    expect(find.text('32GB DRR5'), findsOneWidget);
+    expect(find.text('GPU:RTX 4060'), findsOneWidget);
+    expect(find.text('CPU:i9-13900K'), findsOneWidget);
+    expect(find.text('RAM:32GB DRR5'), findsOneWidget);
     // Nhấn nút xoá sự kiện
-    await tester.tap(find.widgetWithText(FilledButton, 'Xoá sự kiện'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
     await tester.pumpAndSettle();
 
     // Kiểm tra xem Navigator đã pop hay chưa (tức là trở về màn hình trước)

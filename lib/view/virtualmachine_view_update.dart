@@ -313,7 +313,7 @@ class _VirtualmachineViewUpdateState extends State<VirtualmachineViewUpdate> {
               content: Center(child: Text('You have successfully updated'))));
                               Navigator.of(context).pop(true);
                             },
-                      label: const Text('Update sự kiện'),
+                      label: const Text('Update'),
                     )
                   ],
                 ),

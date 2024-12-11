@@ -226,7 +226,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
               children: [Column( children: [
               
                  const SizedBox(height: 10),
-                Text(widget.event.description)],)],
+                Text(softWrap: true,overflow: TextOverflow.visible,widget.event.description)],)],
             ),
             const SizedBox(height: 15),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

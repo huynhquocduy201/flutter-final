@@ -26,7 +26,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Máy 2');
 
     // Nhấn nút Lưu sự kiện
-    await tester.tap(find.widgetWithText(FilledButton, 'Update sự kiện'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Update'));
     await tester.pumpAndSettle();
 
     // Kiểm tra xem Navigator đã pop hay chưa (tức là trở về màn hình trước)

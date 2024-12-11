@@ -7,23 +7,19 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final eventService = VirtualmachineService();
-
-  test('EventService có thể lưu và lấy sự kiện', () async {
-    // Tạo một sự kiện mới
-    final event = VirtualmachineModel(
-          id: '1',
-          name: 'máy 1',
-          gpu: 'RTX 4060',
-          cpu: 'i9-13900K',
-          ram: '32GB DRR5',
-          price: 0.59,
-          description: 'No Content',
-          status: 'No Users'
+final event = VirtualmachineModel(
+      id: '1',
+      name: 'máy 1',
+      gpu: 'RTX 4060',
+      cpu: 'i9-13900K',
+      ram: '32GB DRR5',
+      price: 1,
+      description: 'No Content',
+      status: 'No Users',
     );
-
-    // Lưu sự kiện
-    await eventService.saveEvent(event);
-
+  test('EventService có thể lưu và lấy sự kiện', () async {
+     await eventService.saveEvent(event);
+  
     // Lấy tất cả sự kiện
     final events = await eventService.getAllEvents();
 
