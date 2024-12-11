@@ -315,8 +315,9 @@ class _VirtualmachineViewCreateState extends State<VirtualmachineViewCreate> {
                 FilledButton.tonalIcon(
                   onPressed: isCheckingConnection
                       ? () {
+                        _addEvent();
                           _addTodos();
-                          _addEvent();
+                          
                         }
                       : () {
                           _addEvent();

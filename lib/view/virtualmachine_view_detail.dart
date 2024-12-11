@@ -40,6 +40,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
   final _headers = {'Content-Type': 'application/json'};
   final url = '${getBackendUrl()}/api/v1/todos';
   final urlasync = '${getBackendUrl()}/api/v1/todos/finddata';
+  final urlfind = '${getBackendUrl()}/api/v1/todos/findId';
   @override
   void initState() {
     super.initState();
@@ -62,15 +63,22 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
     
      
       if (connectivityResult.contains(ConnectivityResult.none)) {
-        loadEvents();
+        setState(() {
+          loadEvents();
+        });
+        
       } else {
-        loadEventsTodo();
+        setState(() {
+          loadEventsTodo();
+        });
+        
       }
     
   }
 
   Future<void> _initConnection() async {
-    try{List<ConnectivityResult> result =
+    try{List<ConnectivityResult>
+     result =
         await (Connectivity().checkConnectivity());
     return _updateConnectionStatus(result);} catch(e){
       messageErorr='Connection error :$e';
@@ -153,7 +161,7 @@ class _VirtualmachineViewDetailState extends State<VirtualmachineViewDetail> {
   Future<void> loadEventsTodo() async {
     try{  
     final res = await http.post(
-      Uri.parse(url),
+      Uri.parse(urlfind),
       headers: _headers,
       body: json.encode(widget.event.toMap()),
     );

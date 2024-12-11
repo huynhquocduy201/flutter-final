@@ -19,6 +19,7 @@ class TodoRouter {
     router.post('/todos/async', asyncData);
     router.post('/todos/finddata', findData);
     router.post('/todos/filterdata', filterData);
+    router.post('/todos/findid',findId);
     return router;
   }
 
@@ -90,7 +91,24 @@ class TodoRouter {
       );
     }
   }
-
+Future<Response> findId(Request req) async {
+    try {
+      final payload = await req.readAsString();
+      final data = json.decode(payload) ;
+     
+      final data1 = VirtualmachineModel.fromMap(data);
+      final body = json.encode(await Mongodb.finddata(data1));
+      return Response.ok(
+        body,
+        headers: _headers,
+      );
+    } catch (e) {
+      return Response.internalServerError(
+        body: json.encode({'lỗi': e.toString()}),
+        headers: _headers,
+      );
+    }
+  }
   Future<Response> findData(Request req) async {
     try {
       final payload = await req.readAsString();

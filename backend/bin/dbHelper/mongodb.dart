@@ -77,7 +77,10 @@ static Future<void> insertall(List<Map<String, dynamic>> data) async {
     var datafind = await userCollection.findOne({'id': data.id});
     return datafind;
   }
-
+ static Future<dynamic> findId(VirtualmachineModel data) async {
+    var datafind = await userCollection.findOne({'id': data.id});
+    return datafind;
+  }
   static Future<void> update(VirtualmachineModel data) async {
     var filter = where.eq('id', data.id);
     var update = modify

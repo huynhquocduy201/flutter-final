@@ -51,6 +51,7 @@ class _VirtualmachineViewState extends State<VirtualmachineView> {
   String username = '';
   String? dropdownValue;
   String? dropdownValueSort;
+  String? erorr;
   @override
   void initState() {
     super.initState();
@@ -253,18 +254,26 @@ Future<void> _asyncData() async {
       final res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
         final List<dynamic> todoList = json.decode(res.body);
-        setState(() {
-          
+      
+  setState(() {
+          erorr=null;
           _todo.clear();
           _todo.addAll(todoList
               .map((e) => VirtualmachineModel.fromMap(e))
               .toList());
               isasync=false;
         });
+       
+      
       
     }
       }
 
+    }else{
+setState(() {
+         erorr='No data found';
+          isasync=false;
+      });
     }
     } catch(e){ 
       if (!mounted) return;
@@ -281,12 +290,20 @@ Future<void> _asyncData() async {
     final res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
         final List<dynamic> todoList = json.decode(res.body);
-        setState(() {
+        if(todoList.isNotEmpty){
+ setState(() {
+  erorr=null;
           _todo.clear();
           _todo.addAll(todoList
               .map((e) => VirtualmachineModel.fromMap(e))
               .toList());
         });
+        }else{
+          setState(() {
+         erorr='No data found';
+      });
+        }
+       
       
     }
   }
@@ -316,10 +333,22 @@ Future<void> _asyncData() async {
 
   Future<void> loadEvents() async {
     final events = await eventService.getAllEvents();
-    setState(() {
+    if(events.isNotEmpty){
+ setState(() {
+  
+      erorr=null;
+  
+
       items = events;
       isasync=false;
     });
+    }else{
+      setState(() {
+         erorr='No data found';
+      });
+     
+    }
+   
   }
 
   Future<void> _initConnection() async {
@@ -358,6 +387,10 @@ Future<void> _asyncData() async {
      if(isStart){
       setState(() {
         isStart=false;
+        if(kIsWeb){
+_asyncData();
+        }
+        
       });
      }else{
   _asyncData();
@@ -449,7 +482,7 @@ Future<void> _asyncData() async {
           ]),
       body: isasync? const Center(child: CircularProgressIndicator()):Padding(
           padding: const EdgeInsets.all(0.8),
-          child: Column(
+          child: erorr!=null ? Center(child: Text('$erorr'),): Column(
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 DropdownButton<String>(
@@ -600,6 +633,7 @@ Future<void> _asyncData() async {
                                     .then((value) async {
                                   if (value == true) {
                                     await loadEvents();
+                                    await _fetchTodos();
                                   }
                                 });
                               },
@@ -671,7 +705,7 @@ Future<void> _asyncData() async {
                         ))
             ],
           )),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton:isasync?null: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
               .push(MaterialPageRoute(
@@ -687,9 +721,9 @@ Future<void> _asyncData() async {
             }
           });
         },
-        child: const Icon(Icons.add),
+        child:  const Icon(Icons.add),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation:  FloatingActionButtonLocation.endFloat,
     );
   }
 }
