@@ -135,7 +135,6 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 + Kết quả kiểm thử viewdetail
 + Kết quả kiểm thử view
 + Kết quả kiểm thử update
-
 ### Đánh giá điểm
   Thi so với tiêu chí đánh giá thì mức độ hoàn thiện cửa ứng dụng thuê máy ảo của em:10/10
 
