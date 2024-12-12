@@ -128,6 +128,7 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 + Kết quả kiểm thử đăng nhập
   ![2](https://github.com/user-attachments/assets/14cefa36-4b8d-4892-a4d8-f118d71e1d6a)
 + Kết quả kiểm thử đăng ký
+  ![1](https://github.com/user-attachments/assets/c88c9747-b538-4077-a0d1-27fb2702cc92)
 # Kết quả kiểm thử service và model
 + Kết quả kiểm thử service
 + Kết quả iểm thử model
