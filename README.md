@@ -136,7 +136,7 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 + Kết quả kiểm thử add
 + ![addtest](https://github.com/user-attachments/assets/06ec4ccc-0c9f-47a1-93fa-05e92663744f)
 + Kết quả kiểm thử viewdetail
-+ 
+  ![detail](https://github.com/user-attachments/assets/11500740-7d7c-4e86-b016-2f05c50b60ec)
 + Kết quả kiểm thử view
 ![view](https://github.com/user-attachments/assets/14f56b8f-bf6d-43e8-984b-9ec64533e6cf)
 + Kết quả kiểm thử update
