@@ -123,6 +123,19 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 + Kiểm thử các chức năng CRUD và model
 + Kiểm thử xác thực người dùng 
 + Kiểm thử các service cho việc lưu trữ cục bộ 
+### Kết quả kiểm thử CI/CD
+# Kết quả kiểm thử xác nhận người dùng
++ Kết quả kiểm thử đăng nhập
++ Kết quả kiểm thử đăng ký
+# Kết quả kiểm thử service và model
++ Kết quả kiểm thử service
++ Kết quả iểm thử model
+# Kết quả kiểm thử  chức năng CRUD
++ Kết quả kiểm thử Thêm
++ Kết quả kiểm thử viewdetail
++ Kết quả kiểm thử view
++ Kết quả kiểm thử update
+
 ### Đánh giá điểm
   Thi so với tiêu chí đánh giá thì mức độ hoàn thiện cửa ứng dụng thuê máy ảo của em:10/10
 
