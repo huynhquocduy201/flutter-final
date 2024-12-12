@@ -126,6 +126,7 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 ### Kết quả kiểm thử CI/CD
 # Kết quả kiểm thử xác nhận người dùng
 + Kết quả kiểm thử đăng nhập
+  ![2](https://github.com/user-attachments/assets/14cefa36-4b8d-4892-a4d8-f118d71e1d6a)
 + Kết quả kiểm thử đăng ký
 # Kết quả kiểm thử service và model
 + Kết quả kiểm thử service
