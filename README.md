@@ -133,7 +133,8 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 + Kết quả kiểm thử service
 + Kết quả iểm thử model
 # Kết quả kiểm thử  chức năng CRUD
-+ Kết quả kiểm thử Thêm
++ Kết quả kiểm thử add
++ ![addtest](https://github.com/user-attachments/assets/06ec4ccc-0c9f-47a1-93fa-05e92663744f)
 + Kết quả kiểm thử viewdetail
 + Kết quả kiểm thử view
 + Kết quả kiểm thử update
