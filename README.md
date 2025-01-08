@@ -85,9 +85,9 @@
 
 ## Báo cáo
 ### Thông tin sinh viên
-- **Họ và tên**:Nguyễn Văn Nguyên Đán
-- **MSSV**: 2121050299
-- **Lớp**: DCCTCT66_O8A
+- **Họ và tên**:Huỳnh Quốc Duy
+- **MSSV**: 1921050136
+- **Lớp**: DCCTDH64
 
 ### Giới thiệu
  Sau khi đã được học xong về học phần phát triển ứng dụng đa nền tảng thì em đã ứng dụng để
@@ -126,15 +126,23 @@ Thì các công nghệ và thư viện mà em sử dụng trong quá trình phá
 ### Kết quả kiểm thử CI/CD
 # Kết quả kiểm thử xác nhận người dùng
 + Kết quả kiểm thử đăng nhập
+  ![2](https://github.com/user-attachments/assets/14cefa36-4b8d-4892-a4d8-f118d71e1d6a)
 + Kết quả kiểm thử đăng ký
+  ![1](https://github.com/user-attachments/assets/c88c9747-b538-4077-a0d1-27fb2702cc92)
 # Kết quả kiểm thử service và model
 + Kết quả kiểm thử service
 + Kết quả iểm thử model
 # Kết quả kiểm thử  chức năng CRUD
-+ Kết quả kiểm thử Thêm
++ Kết quả kiểm thử add
++ ![addtest](https://github.com/user-attachments/assets/06ec4ccc-0c9f-47a1-93fa-05e92663744f)
 + Kết quả kiểm thử viewdetail
+  ![detail](https://github.com/user-attachments/assets/11500740-7d7c-4e86-b016-2f05c50b60ec)
 + Kết quả kiểm thử view
+![view](https://github.com/user-attachments/assets/14f56b8f-bf6d-43e8-984b-9ec64533e6cf)
 + Kết quả kiểm thử update
+  ![ud](https://github.com/user-attachments/assets/08f63fd5-6633-4e34-802b-d09fa63352bd)
+
+
 ### Đánh giá điểm
   Thi so với tiêu chí đánh giá thì mức độ hoàn thiện cửa ứng dụng thuê máy ảo của em:10/10
 

@@ -9,7 +9,7 @@ class Mongodb {
   static var db, userCollection;
 
   static connect() async {
-    db = await Db(MONGO_CONN_URL);
+    db = Db(MONGO_CONN_URL);
     await db.open();
     inspect(db);
     userCollection = db.collection(USER_COLLECTION);
